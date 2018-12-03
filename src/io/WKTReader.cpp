@@ -365,10 +365,10 @@ WKTReader::readMultiPointText(StringTokenizer *tokenizer)
 	}
 }
 
-Polygon*
+geos::geom::Polygon*
 WKTReader::readPolygonText(StringTokenizer *tokenizer)
 {
-	Polygon *poly=nullptr;
+	geos::geom::Polygon *poly=nullptr;
 	LinearRing *shell=nullptr;
 	string nextToken=getNextEmptyOrOpener(tokenizer);
 	if (nextToken=="EMPTY") {
@@ -431,7 +431,7 @@ MultiPolygon* WKTReader::readMultiPolygonText(StringTokenizer *tokenizer) {
 		return geometryFactory->createMultiPolygon(nullptr);
 	}
 	vector<Geometry *> *polygons=new vector<Geometry *>();
-	Polygon *polygon = nullptr;
+	geos::geom::Polygon *polygon = nullptr;
 	try {
 		polygon=readPolygonText(tokenizer);
 		polygons->push_back(polygon);

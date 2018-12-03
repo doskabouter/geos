@@ -199,8 +199,8 @@ WKTWriter::appendGeometryTaggedText(const Geometry *geometry, int p_level,
   {
     appendLineStringTaggedText(ls, p_level, writer);
   }
-  else if ( const Polygon* x1 =
-    dynamic_cast<const Polygon*>(geometry) )
+  else if ( const geos::geom::Polygon* x1 =
+    dynamic_cast<const geos::geom::Polygon*>(geometry) )
   {
     appendPolygonTaggedText(x1, p_level, writer);
   }
@@ -267,7 +267,7 @@ void WKTWriter::appendLinearRingTaggedText(const LinearRing* linearRing, int p_l
 	appendLineStringText((LineString*)linearRing, p_level, false, writer);
 }
 
-void WKTWriter::appendPolygonTaggedText(const Polygon *polygon, int p_level, Writer *writer) {
+void WKTWriter::appendPolygonTaggedText(const geos::geom::Polygon *polygon, int p_level, Writer *writer) {
 	writer->write("POLYGON ");
 	if( outputDimension == 3 && !old3D && !polygon->isEmpty())
 		writer->write( "Z " );
@@ -367,7 +367,7 @@ WKTWriter::appendLineStringText(const LineString *lineString, int p_level,
 }
 
 void
-WKTWriter::appendPolygonText(const Polygon *polygon, int /*level*/,
+WKTWriter::appendPolygonText(const geos::geom::Polygon *polygon, int /*level*/,
 		bool indentFirst, Writer *writer)
 {
 	if (polygon->isEmpty()) {
@@ -447,7 +447,7 @@ void WKTWriter::appendMultiPolygonText(const MultiPolygon *multiPolygon, int p_l
 				level2=p_level+1;
 				doIndent=true;
 			}
-			const Polygon *p = dynamic_cast<const Polygon *>(
+			const geos::geom::Polygon *p = dynamic_cast<const geos::geom::Polygon *>(
 			  multiPolygon->getGeometryN(i)
 			);
 			appendPolygonText(p, level2, doIndent, writer);

@@ -66,7 +66,7 @@ IsValidOp::findPtNotNode(const CoordinateSequence *testCoords,
 	const LinearRing *searchRing, GeometryGraph *graph)
 {
 	// find edge corresponding to searchRing.
-	Edge *searchEdge=graph->findEdge(searchRing);
+	geos::geomgraph::Edge *searchEdge=graph->findEdge(searchRing);
 	// find a point in the testCoords which is not a node of the searchRing
 	EdgeIntersectionList &eiList=searchEdge->getEdgeIntersectionList();
 	// somewhat inefficient - is there a better way? (Use a node map, for instance?)
@@ -139,7 +139,7 @@ IsValidOp::checkValid(const Geometry *g)
     checkValid(x2);
 	else if ( const LineString* x3 = dynamic_cast<const LineString*>(g) )
     checkValid(x3);
-	else if ( const Polygon* x4 = dynamic_cast<const Polygon*>(g) )
+	else if ( const geos::geom::Polygon* x4 = dynamic_cast<const geos::geom::Polygon*>(g) )
     checkValid(x4);
 	else if ( const MultiPolygon* x5 = dynamic_cast<const MultiPolygon*>(g) )
     checkValid(x5);
@@ -198,7 +198,7 @@ IsValidOp::checkValid(const LinearRing *g){
  * Sets the validErr flag.
  */
 void
-IsValidOp::checkValid(const Polygon *g)
+IsValidOp::checkValid(const geos::geom::Polygon *g)
 {
 	checkInvalidCoordinates(g);
 	if (validErr != nullptr) return;
@@ -232,11 +232,11 @@ void
 IsValidOp::checkValid(const MultiPolygon *g)
 {
 	auto ngeoms = g->getNumGeometries();
-	vector<const Polygon *>polys(ngeoms);
+	vector<const geos::geom::Polygon *>polys(ngeoms);
 
 	for (size_t i=0; i < ngeoms; ++i)
 	{
-		const Polygon *p = dynamic_cast<const Polygon *>(g->getGeometryN(i));
+		const geos::geom::Polygon *p = dynamic_cast<const geos::geom::Polygon *>(g->getGeometryN(i));
 
 		checkInvalidCoordinates(p);
 		if (validErr != nullptr) return;
@@ -263,14 +263,14 @@ IsValidOp::checkValid(const MultiPolygon *g)
 
 	for(unsigned int i=0; i<ngeoms; ++i)
 	{
-		const Polygon *p=polys[i];
+		const geos::geom::Polygon *p=polys[i];
 		checkHolesInShell(p, &graph);
 		if (validErr!=nullptr) return;
 	}
 
 	for(unsigned int i=0; i<ngeoms; ++i)
 	{
-		const Polygon *p=polys[i];
+		const geos::geom::Polygon *p=polys[i];
 		checkHolesNotNested(p, &graph);
 		if (validErr!=nullptr) return;
 	}
@@ -338,10 +338,10 @@ IsValidOp::checkConsistentArea(GeometryGraph *graph)
 void
 IsValidOp::checkNoSelfIntersectingRings(GeometryGraph *graph)
 {
-	vector<Edge*> *edges=graph->getEdges();
+	vector<geos::geomgraph::Edge*> *edges=graph->getEdges();
 	for(unsigned int i=0; i<edges->size(); ++i)
 	{
-		Edge *e=(*edges)[i];
+		geos::geomgraph::Edge *e=(*edges)[i];
 		checkNoSelfIntersectingRing(e->getEdgeIntersectionList());
 		if(validErr!=nullptr) return;
 	}
@@ -375,7 +375,7 @@ IsValidOp::checkNoSelfIntersectingRing(EdgeIntersectionList &eiList)
 
 /*private*/
 void
-IsValidOp::checkHolesInShell(const Polygon *p, GeometryGraph *graph)
+IsValidOp::checkHolesInShell(const geos::geom::Polygon *p, GeometryGraph *graph)
 {
 	assert(dynamic_cast<const LinearRing*>(p->getExteriorRing()));
 
@@ -439,7 +439,7 @@ IsValidOp::checkHolesInShell(const Polygon *p, GeometryGraph *graph)
 
 /*private*/
 void
-IsValidOp::checkHolesNotNested(const Polygon *p, GeometryGraph *graph)
+IsValidOp::checkHolesNotNested(const geos::geom::Polygon *p, GeometryGraph *graph)
 {
 	//SimpleNestedRingTester nestedTester(graph);
 	//SweeplineNestedRingTester nestedTester(graph);
@@ -476,7 +476,7 @@ IsValidOp::checkShellsNotNested(const MultiPolygon *mp, GeometryGraph *graph)
 {
 	for(size_t i = 0, ngeoms = mp->getNumGeometries(); i < ngeoms; ++i)
 	{
-		const Polygon *p=dynamic_cast<const Polygon *>(
+		const geos::geom::Polygon *p=dynamic_cast<const geos::geom::Polygon *>(
 				mp->getGeometryN(i));
 		assert(p);
 
@@ -488,7 +488,7 @@ IsValidOp::checkShellsNotNested(const MultiPolygon *mp, GeometryGraph *graph)
 		{
 			if (i==j) continue;
 
-			const Polygon *p2 = dynamic_cast<const Polygon *>(
+			const geos::geom::Polygon *p2 = dynamic_cast<const geos::geom::Polygon *>(
 					mp->getGeometryN(j));
 			assert(p2);
 
@@ -503,7 +503,7 @@ IsValidOp::checkShellsNotNested(const MultiPolygon *mp, GeometryGraph *graph)
 
 /*private*/
 void
-IsValidOp::checkShellNotNested(const LinearRing *shell, const Polygon *p,
+IsValidOp::checkShellNotNested(const LinearRing *shell, const geos::geom::Polygon *p,
 	GeometryGraph *graph)
 {
 	const CoordinateSequence *shellPts=shell->getCoordinatesRO();
@@ -620,7 +620,7 @@ IsValidOp::checkInvalidCoordinates(const CoordinateSequence *cs)
 
 /*private*/
 void
-IsValidOp::checkInvalidCoordinates(const Polygon *poly)
+IsValidOp::checkInvalidCoordinates(const geos::geom::Polygon *poly)
 {
 	checkInvalidCoordinates(poly->getExteriorRing()->getCoordinatesRO());
 	if (validErr != nullptr) return;
@@ -637,7 +637,7 @@ IsValidOp::checkInvalidCoordinates(const Polygon *poly)
 
 /*private*/
 void
-IsValidOp::checkClosedRings(const Polygon *poly)
+IsValidOp::checkClosedRings(const geos::geom::Polygon *poly)
 {
 	const LinearRing *lr=(const LinearRing *)poly->getExteriorRing();
 	checkClosedRing(lr);

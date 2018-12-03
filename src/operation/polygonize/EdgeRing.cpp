@@ -154,7 +154,7 @@ EdgeRing::~EdgeRing()
 
 /*public*/
 void
-EdgeRing::add(const DirectedEdge *de){
+EdgeRing::add(const geos::planargraph::DirectedEdge *de){
     deList.push_back(de);
 }
 
@@ -175,10 +175,10 @@ EdgeRing::addHole(LinearRing *hole)
 }
 
 /*public*/
-Polygon*
+geos::geom::Polygon*
 EdgeRing::getPolygon()
 {
-    Polygon *poly=factory->createPolygon(ring, holes);
+    geos::geom::Polygon *poly=factory->createPolygon(ring, holes);
     ring=nullptr;
     holes=nullptr;
     return poly;
@@ -200,7 +200,7 @@ EdgeRing::getCoordinates()
     {
         ringPts=factory->getCoordinateSequenceFactory()->create();
         for (DeList::size_type i=0, e=deList.size(); i<e; ++i) {
-            const DirectedEdge *de=deList[i];
+            const geos::planargraph::DirectedEdge *de=deList[i];
             assert(dynamic_cast<PolygonizeEdge*>(de->getEdge()));
             PolygonizeEdge *edge=static_cast<PolygonizeEdge*>(de->getEdge());
             addEdge(edge->getLine()->getCoordinatesRO(),

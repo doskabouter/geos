@@ -57,7 +57,7 @@ RepeatedPointTester::hasRepeatedPoint(const Geometry *g)
     return hasRepeatedPoint(x->getCoordinatesRO());
   }
 
-	if ( const Polygon* x = dynamic_cast<const Polygon*>(g) )
+	if ( const geos::geom::Polygon* x = dynamic_cast<const geos::geom::Polygon*>(g) )
   {
     return hasRepeatedPoint(x);
   }
@@ -95,7 +95,7 @@ RepeatedPointTester::hasRepeatedPoint(const CoordinateSequence *coord)
 }
 
 bool
-RepeatedPointTester::hasRepeatedPoint(const Polygon *p)
+RepeatedPointTester::hasRepeatedPoint(const geos::geom::Polygon *p)
 {
 	if (hasRepeatedPoint(p->getExteriorRing()->getCoordinates()))
 	{

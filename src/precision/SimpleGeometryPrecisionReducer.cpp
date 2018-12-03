@@ -166,9 +166,10 @@ Geometry*
 SimpleGeometryPrecisionReducer::reduce(const Geometry *geom)
 {
 	GeometryEditor geomEdit;
-	PrecisionReducerCoordinateOperation prco(this);
-	Geometry *g=geomEdit.edit(geom, &prco);
-	return g;
+	throw geos::util::IllegalArgumentException("fix code");
+	//PrecisionReducerCoordinateOperation prco(this);
+	//Geometry *g=geomEdit.edit(geom, &prco);
+	return NULL;
 }
 
 } // namespace geos.precision

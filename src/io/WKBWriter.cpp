@@ -99,7 +99,7 @@ WKBWriter::write(const Geometry &g, ostream &os)
     return writeLineString(*x);
   }
 
-  if ( const Polygon* x = dynamic_cast<const Polygon*>(&g) )
+  if ( const geos::geom::Polygon* x = dynamic_cast<const geos::geom::Polygon*>(&g) )
   {
     return writePolygon(*x);
   }
@@ -158,7 +158,7 @@ WKBWriter::writeLineString(const LineString &g)
 }
 
 void
-WKBWriter::writePolygon(const Polygon &g)
+WKBWriter::writePolygon(const geos::geom::Polygon &g)
 {
 	writeByteOrder();
 

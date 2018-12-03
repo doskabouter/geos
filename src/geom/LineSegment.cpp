@@ -285,7 +285,7 @@ LineSegment::pointAlongOffset(double segmentLengthFraction,
 	double uy = 0.0;
 	if (offsetDistance != 0.0) {
 		if (len <= 0.0) {
-			throw util::IllegalStateException("Cannot compute offset from zero-length line segment");
+			throw geos::util::IllegalStateException("Cannot compute offset from zero-length line segment");
 		}
 
 		// u is the vector that is the length of the offset,

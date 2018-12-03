@@ -248,7 +248,7 @@ CoordinateArraySequence::setOrdinate(size_t index, size_t ordinateIndex,
 		{
 			std::stringstream ss;
 			ss << "Unknown ordinate index " << index;
-			throw util::IllegalArgumentException(ss.str());
+			throw geos::util::IllegalArgumentException(ss.str());
 			break;
 		}
 	}

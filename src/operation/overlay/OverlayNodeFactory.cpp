@@ -27,10 +27,10 @@ namespace geos {
 namespace operation { // geos.operation
 namespace overlay { // geos.operation.overlay
 
-Node*
+	geos::geomgraph::Node*
 OverlayNodeFactory::createNode(const geom::Coordinate &coord) const
 {
-	return new Node(coord, new DirectedEdgeStar());
+	return new geos::geomgraph::Node(coord, new geos::geomgraph::DirectedEdgeStar());
 }
 
 const NodeFactory &

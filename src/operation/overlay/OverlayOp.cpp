@@ -190,10 +190,10 @@ OverlayOp::getResultGeometry(OverlayOp::OpCode funcCode)
 
 /*private*/
 void
-OverlayOp::insertUniqueEdges(vector<Edge*> *edges, const Envelope *env)
+OverlayOp::insertUniqueEdges(vector<geos::geomgraph::Edge*> *edges, const Envelope *env)
 {
   for(size_t i=0, n=edges->size(); i<n; ++i) {
-    Edge *e = (*edges)[i];
+		geos::geomgraph::Edge *e = (*edges)[i];
 		if ( env && ! env->intersects(e->getEnvelope()) ) {
 		  dupEdges.push_back(e); // or could it be deleted directly ?
       continue;
@@ -213,11 +213,11 @@ OverlayOp::insertUniqueEdges(vector<Edge*> *edges, const Envelope *env)
 void
 OverlayOp::replaceCollapsedEdges()
 {
-	vector<Edge*>& edges=edgeList.getEdges();
+	vector<geos::geomgraph::Edge*>& edges=edgeList.getEdges();
 
 	for(size_t i=0, nedges=edges.size(); i<nedges; ++i)
 	{
-		Edge *e=edges[i];
+		geos::geomgraph::Edge *e=edges[i];
 		assert(e);
 		if (e->isCollapsed())
 		{
@@ -247,11 +247,11 @@ OverlayOp::copyPoints(int argIndex, const Envelope *env)
 
 	// TODO: set env to null if it covers arg geometry envelope
 
-	NodeMap::container& nodeMap=arg[argIndex]->getNodeMap()->nodeMap;
-	for ( NodeMap::const_iterator it=nodeMap.begin(), itEnd=nodeMap.end();
+	geos::geomgraph::NodeMap::container& nodeMap=arg[argIndex]->getNodeMap()->nodeMap;
+	for (geos::geomgraph::NodeMap::const_iterator it=nodeMap.begin(), itEnd=nodeMap.end();
 			it != itEnd; ++it )
 	{
-		Node* graphNode=it->second;
+		geos::geomgraph::Node* graphNode=it->second;
 		assert(graphNode);
 		const Coordinate &coord = graphNode->getCoordinate();
 
@@ -260,7 +260,7 @@ OverlayOp::copyPoints(int argIndex, const Envelope *env)
 #ifdef GEOS_DEBUG_COPY_POINTS
 		++copied;
 #endif
-		Node* newNode=graph.addNode(coord);
+		geos::geomgraph::Node* newNode=graph.addNode(coord);
 		assert(newNode);
 
 		newNode->setLabel(argIndex, graphNode->getLabel().getLocation(argIndex));
@@ -276,7 +276,7 @@ void
 OverlayOp::computeLabelling()
 	//throw(TopologyException *) // and what else ?
 {
-	NodeMap::container& nodeMap=graph.getNodeMap()->nodeMap;
+	geos::geomgraph::NodeMap::container& nodeMap=graph.getNodeMap()->nodeMap;
 
 #if GEOS_DEBUG
 	cerr<<"OverlayOp::computeLabelling(): at call time: "<<edgeList.print()<<endl;
@@ -286,10 +286,10 @@ OverlayOp::computeLabelling()
 	cerr<<"OverlayOp::computeLabelling() scanning "<<nodeMap.size()<<" nodes from map:"<<endl;
 #endif
 
-	for ( NodeMap::const_iterator it=nodeMap.begin(), itEnd=nodeMap.end();
+	for (geos::geomgraph::NodeMap::const_iterator it=nodeMap.begin(), itEnd=nodeMap.end();
 			it != itEnd; ++it )
 	{
-		Node *node=it->second;
+		geos::geomgraph::Node *node=it->second;
 #if GEOS_DEBUG
 		cerr<<"     "<<node->print()<<" has "<<node->getEdges()->getEdges().size()<<" edgeEnds"<<endl;
 #endif
@@ -312,19 +312,19 @@ OverlayOp::computeLabelling()
 void
 OverlayOp::mergeSymLabels()
 {
-	NodeMap::container& nodeMap=graph.getNodeMap()->nodeMap;
+	geos::geomgraph::NodeMap::container& nodeMap=graph.getNodeMap()->nodeMap;
 
 #if GEOS_DEBUG
 	cerr<<"OverlayOp::mergeSymLabels() scanning "<<nodeMap.size()<<" nodes from map:"<<endl;
 #endif
 
-	for ( NodeMap::const_iterator it=nodeMap.begin(), itEnd=nodeMap.end();
+	for (geos::geomgraph::NodeMap::const_iterator it=nodeMap.begin(), itEnd=nodeMap.end();
 			it != itEnd; ++it )
 	{
-		Node *node=it->second;
+		geos::geomgraph::Node *node=it->second;
 		EdgeEndStar* ees=node->getEdges();
-		assert(dynamic_cast<DirectedEdgeStar*>(ees));
-		static_cast<DirectedEdgeStar*>(ees)->mergeSymLabels();
+		assert(dynamic_cast<geos::geomgraph::DirectedEdgeStar*>(ees));
+		static_cast<geos::geomgraph::DirectedEdgeStar*>(ees)->mergeSymLabels();
 		//((DirectedEdgeStar*)node->getEdges())->mergeSymLabels();
 #if GEOS_DEBUG
 		cerr<<"     "<<node->print()<<endl;
@@ -342,20 +342,20 @@ OverlayOp::updateNodeLabelling()
 	// (Note that a node may have already been labelled
 	// because it is a point in one of the input geometries)
 
-	NodeMap::container& nodeMap=graph.getNodeMap()->nodeMap;
+	geos::geomgraph::NodeMap::container& nodeMap=graph.getNodeMap()->nodeMap;
 
 #if GEOS_DEBUG
 	cerr << "OverlayOp::updateNodeLabelling() scanning "
 	     << nodeMap.size() << " nodes from map:" << endl;
 #endif
 
-	for ( NodeMap::const_iterator it=nodeMap.begin(), itEnd=nodeMap.end();
+	for (geos::geomgraph::NodeMap::const_iterator it=nodeMap.begin(), itEnd=nodeMap.end();
 			it != itEnd; ++it )
 	{
-		Node *node=it->second;
+		geos::geomgraph::Node *node=it->second;
 		EdgeEndStar* ees = node->getEdges();
-		assert( dynamic_cast<DirectedEdgeStar*>(ees) );
-		DirectedEdgeStar* des = static_cast<DirectedEdgeStar*>(ees);
+		assert( dynamic_cast<geos::geomgraph::DirectedEdgeStar*>(ees) );
+		geos::geomgraph::DirectedEdgeStar* des = static_cast<geos::geomgraph::DirectedEdgeStar*>(ees);
 		Label &lbl = des->getLabel();
 		node->getLabel().merge(lbl);
 #if GEOS_DEBUG
@@ -368,16 +368,16 @@ OverlayOp::updateNodeLabelling()
 void
 OverlayOp::labelIncompleteNodes()
 {
-	NodeMap::container& nodeMap=graph.getNodeMap()->nodeMap;
+	geos::geomgraph::NodeMap::container& nodeMap=graph.getNodeMap()->nodeMap;
 
 #if GEOS_DEBUG
 	cerr<<"OverlayOp::labelIncompleteNodes() scanning "<<nodeMap.size()<<" nodes from map:"<<endl;
 #endif
 
-	for ( NodeMap::const_iterator it=nodeMap.begin(), itEnd=nodeMap.end();
+	for (geos::geomgraph::NodeMap::const_iterator it=nodeMap.begin(), itEnd=nodeMap.end();
 			it != itEnd; ++it )
 	{
-		Node *n=it->second;
+		geos::geomgraph::Node *n=it->second;
 		const Label& label = n->getLabel();
 		if (n->isIsolated())
 		{
@@ -392,8 +392,8 @@ OverlayOp::labelIncompleteNodes()
 		}
 		// now update the labelling for the DirectedEdges incident on this node
 		EdgeEndStar* ees = n->getEdges();
-		assert( dynamic_cast<DirectedEdgeStar*>(ees) );
-		DirectedEdgeStar* des = static_cast<DirectedEdgeStar*>(ees);
+		assert( dynamic_cast<geos::geomgraph::DirectedEdgeStar*>(ees) );
+		geos::geomgraph::DirectedEdgeStar* des = static_cast<geos::geomgraph::DirectedEdgeStar*>(ees);
 
 		des->updateLabelling(label);
 		//((DirectedEdgeStar*)n->getEdges())->updateLabelling(label);
@@ -403,7 +403,7 @@ OverlayOp::labelIncompleteNodes()
 
 /*private*/
 void
-OverlayOp::labelIncompleteNode(Node *n, int targetIndex)
+OverlayOp::labelIncompleteNode(geos::geomgraph::Node *n, int targetIndex)
 {
 #if GEOS_DEBUG
 	cerr<<"OverlayOp::labelIncompleteNode("<<n->print()<<", "<<targetIndex<<")"<<endl;
@@ -435,7 +435,7 @@ OverlayOp::labelIncompleteNode(Node *n, int targetIndex)
 	{
 		mergeZ(n, line);
 	}
-	const Polygon *poly = dynamic_cast<const Polygon *>(targetGeom);
+	const geos::geom::Polygon *poly = dynamic_cast<const geos::geom::Polygon *>(targetGeom);
 	if ( loc == Location::BOUNDARY && poly )
 	{
 		mergeZ(n, poly);
@@ -451,7 +451,7 @@ OverlayOp::labelIncompleteNode(Node *n, int targetIndex)
 
 /*static private*/
 double
-OverlayOp::getAverageZ(const Polygon *poly)
+OverlayOp::getAverageZ(const geos::geom::Polygon *poly)
 {
 	double totz = 0.0;
 	int zcount = 0;
@@ -484,7 +484,7 @@ OverlayOp::getAverageZ(int targetIndex)
 	// OverlayOp::getAverageZ(int) called with a ! polygon
 	assert(targetGeom->getGeometryTypeId() == GEOS_POLYGON);
 
-	const Polygon* p = dynamic_cast<const Polygon*>(targetGeom);
+	const geos::geom::Polygon* p = dynamic_cast<const geos::geom::Polygon*>(targetGeom);
 	avgz[targetIndex] = getAverageZ(p);
 	avgzcomputed[targetIndex] = true;
 	return avgz[targetIndex];
@@ -492,7 +492,7 @@ OverlayOp::getAverageZ(int targetIndex)
 
 /*private*/
 int
-OverlayOp::mergeZ(Node *n, const Polygon *poly) const
+OverlayOp::mergeZ(geos::geomgraph::Node *n, const geos::geom::Polygon *poly) const
 {
 	const LineString *ls;
 	int found = 0;
@@ -510,7 +510,7 @@ OverlayOp::mergeZ(Node *n, const Polygon *poly) const
 
 /*private*/
 int
-OverlayOp::mergeZ(Node *n, const LineString *line) const
+OverlayOp::mergeZ(geos::geomgraph::Node *n, const LineString *line) const
 {
 	const CoordinateSequence *pts = line->getCoordinatesRO();
 	const Coordinate &p = n->getCoordinate();
@@ -548,7 +548,7 @@ OverlayOp::findResultAreaEdges(OverlayOp::OpCode opCode)
 	vector<EdgeEnd*> *ee=graph.getEdgeEnds();
 	for(size_t i=0, e=ee->size(); i<e; ++i)
 	{
-		DirectedEdge *de=(DirectedEdge*) (*ee)[i];
+		geos::geomgraph::DirectedEdge *de=(geos::geomgraph::DirectedEdge*) (*ee)[i];
 		// mark all dirEdges with the appropriate label
 		const Label& label = de->getLabel();
 		if ( label.isArea()
@@ -573,8 +573,8 @@ OverlayOp::cancelDuplicateResultEdges()
 	vector<EdgeEnd*> *ee=graph.getEdgeEnds();
 	for(size_t i=0, eesize=ee->size(); i<eesize; ++i)
 	{
-		DirectedEdge *de=static_cast<DirectedEdge*>( (*ee)[i] );
-		DirectedEdge *sym=de->getSym();
+		geos::geomgraph::DirectedEdge *de=static_cast<geos::geomgraph::DirectedEdge*>( (*ee)[i] );
+		geos::geomgraph::DirectedEdge *sym=de->getSym();
 		if (de->isInResult() && sym->isInResult()) {
 			de->setInResult(false);
 			sym->setInResult(false);
@@ -628,7 +628,7 @@ OverlayOp::isCovered(const Coordinate& coord,vector<LineString*> *geomList)
 
 /*private*/
 bool
-OverlayOp::isCovered(const Coordinate& coord,vector<Polygon*> *geomList)
+OverlayOp::isCovered(const Coordinate& coord,vector<geos::geom::Polygon*> *geomList)
 {
 	for(size_t i=0, n=geomList->size(); i<n; ++i)
 	{
@@ -643,7 +643,7 @@ OverlayOp::isCovered(const Coordinate& coord,vector<Polygon*> *geomList)
 Geometry*
 OverlayOp::computeGeometry(vector<Point*> *nResultPointList,
                               vector<LineString*> *nResultLineList,
-                              vector<Polygon*> *nResultPolyList)
+                              vector<geos::geom::Polygon*> *nResultPolyList)
 {
 	size_t nPoints=nResultPointList->size();
 	size_t nLines=nResultLineList->size();
@@ -729,7 +729,7 @@ OverlayOp::computeOverlay(OverlayOp::OpCode opCode)
 
 	GEOS_CHECK_FOR_INTERRUPTS();
 
-	vector<Edge*> baseSplitEdges;
+	vector<geos::geomgraph::Edge*> baseSplitEdges;
 	arg[0]->computeSplitEdges(&baseSplitEdges);
 	GEOS_CHECK_FOR_INTERRUPTS();
 	arg[1]->computeSplitEdges(&baseSplitEdges);
@@ -821,9 +821,9 @@ OverlayOp::computeOverlay(OverlayOp::OpCode opCode)
 
 	vector<Geometry*> *gv=polyBuilder.getPolygons();
 	size_t gvsize=gv->size();
-	resultPolyList=new vector<Polygon*>(gvsize);
+	resultPolyList=new vector<geos::geom::Polygon*>(gvsize);
 	for(size_t i=0; i<gvsize; ++i) {
-		Polygon* p = dynamic_cast<Polygon*>((*gv)[i]);
+		geos::geom::Polygon* p = dynamic_cast<geos::geom::Polygon*>((*gv)[i]);
 		(*resultPolyList)[i]=p;
 	}
 	delete gv;
@@ -849,7 +849,7 @@ OverlayOp::computeOverlay(OverlayOp::OpCode opCode)
 
 /*protected*/
 void
-OverlayOp::insertUniqueEdge(Edge *e)
+OverlayOp::insertUniqueEdge(geos::geomgraph::Edge *e)
 {
 	//Debug.println(e);
 #if GEOS_DEBUG
@@ -858,7 +858,7 @@ OverlayOp::insertUniqueEdge(Edge *e)
 
 	//<FIX> MD 8 Oct 03  speed up identical edge lookup
 	// fast lookup
-	Edge *existingEdge = edgeList.findEqualEdge(e);
+	geos::geomgraph::Edge *existingEdge = edgeList.findEqualEdge(e);
 
 	// If an identical edge already exists, simply update its label
 	if (existingEdge)

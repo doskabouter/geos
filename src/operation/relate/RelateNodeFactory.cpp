@@ -28,7 +28,7 @@ namespace geos {
 namespace operation { // geos.operation
 namespace relate { // geos.operation.relate
 
-Node*
+	geos::geomgraph::Node*
 RelateNodeFactory::createNode(const Coordinate &coord) const
 {
 	return new RelateNode(coord, new EdgeEndBundleStar());

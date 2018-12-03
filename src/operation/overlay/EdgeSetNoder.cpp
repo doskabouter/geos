@@ -36,21 +36,21 @@ namespace overlay { // geos.operation.overlay
 
 
 void
-EdgeSetNoder::addEdges(vector<Edge*> *edges)
+EdgeSetNoder::addEdges(vector<geos::geomgraph::Edge*> *edges)
 {
 	inputEdges->insert(inputEdges->end(),edges->begin(),edges->end());
 }
 
-vector<Edge*>*
+vector<geos::geomgraph::Edge*>*
 EdgeSetNoder::getNodedEdges()
 {
 	EdgeSetIntersector *esi=new SimpleMCSweepLineIntersector();
-	SegmentIntersector *si=new SegmentIntersector(li,true,false);
+	geos::geomgraph::SegmentIntersector *si=new geos::geomgraph::SegmentIntersector(li,true,false);
 	esi->computeIntersections(inputEdges,si,true);
 	//Debug.println("has proper int = " + si.hasProperIntersection());
-	vector<Edge*> *splitEdges=new vector<Edge*>();
+	vector<geos::geomgraph::Edge*> *splitEdges=new vector<geos::geomgraph::Edge*>();
 	for(int i=0;i<(int)inputEdges->size();i++) {
-		Edge* e=(*inputEdges)[i];
+		geos::geomgraph::Edge* e=(*inputEdges)[i];
 		e->getEdgeIntersectionList().addSplitEdges(splitEdges);
 	}
 	return splitEdges;

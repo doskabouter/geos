@@ -162,7 +162,7 @@ private:
 	static const int NUM_PTS_TO_CHECK = 10;
 
 	static const int INIT = 0;
-	static const int DELETE = 1;
+	static const int _DELETE = 1;
 	static const int KEEP = 1;
 
 	const geom::CoordinateSequence& inputLine;

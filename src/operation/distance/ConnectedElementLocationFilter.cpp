@@ -50,7 +50,7 @@ ConnectedElementLocationFilter::filter_ro(const Geometry *geom)
 	if ((typeid(*geom)==typeid(Point)) ||
 		(typeid(*geom)==typeid(LineString)) ||
 		(typeid(*geom)==typeid(LinearRing)) ||
-		(typeid(*geom)==typeid(Polygon)))
+		(typeid(*geom)==typeid(geos::geom::Polygon)))
 	{
 		locations->push_back(new GeometryLocation(geom, 0, *(geom->getCoordinate())));
 	}
@@ -60,7 +60,7 @@ void ConnectedElementLocationFilter::filter_rw(Geometry *geom){
 	if ((typeid(*geom)==typeid(Point)) ||
 		(typeid(*geom)==typeid(LineString)) ||
 		(typeid(*geom)==typeid(LinearRing)) ||
-		(typeid(*geom)==typeid(Polygon)))
+		(typeid(*geom)==typeid(geos::geom::Polygon)))
 			locations->push_back(new GeometryLocation(geom, 0, *(geom->getCoordinate())));
 }
 

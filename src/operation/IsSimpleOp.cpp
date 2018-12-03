@@ -171,7 +171,7 @@ IsSimpleOp::isSimpleLinearGeometry(const Geometry *p_geom)
 	if (p_geom->isEmpty()) return true;
 	GeometryGraph graph(0,p_geom);
 	LineIntersector li;
-	std::unique_ptr<SegmentIntersector> si (graph.computeSelfNodes(&li,true));
+	std::unique_ptr<geos::geomgraph::SegmentIntersector> si (graph.computeSelfNodes(&li,true));
 
 	// if no self-intersection, must be simple
 	if (!si->hasIntersection()) return true;
@@ -197,9 +197,9 @@ IsSimpleOp::isSimpleLinearGeometry(const Geometry *p_geom)
 bool
 IsSimpleOp::hasNonEndpointIntersection(GeometryGraph &graph)
 {
-	vector<Edge*> *edges=graph.getEdges();
-	for (vector<Edge*>::iterator i=edges->begin();i<edges->end();i++) {
-		Edge *e=*i;
+	vector<geos::geomgraph::Edge*> *edges=graph.getEdges();
+	for (vector<geos::geomgraph::Edge*>::iterator i=edges->begin();i<edges->end();i++) {
+		geos::geomgraph::Edge *e=*i;
 		auto maxSegmentIndex = e->getMaximumSegmentIndex();
 		EdgeIntersectionList &eiL=e->getEdgeIntersectionList();
 		for ( EdgeIntersectionList::iterator eiIt=eiL.begin(),
@@ -223,9 +223,9 @@ bool
 IsSimpleOp::hasClosedEndpointIntersection(GeometryGraph &graph)
 {
 	map<const Coordinate*,EndpointInfo*,CoordinateLessThen> endPoints;
-	vector<Edge*> *edges=graph.getEdges();
-	for (vector<Edge*>::iterator i=edges->begin();i<edges->end();i++) {
-		Edge *e=*i;
+	vector<geos::geomgraph::Edge*> *edges=graph.getEdges();
+	for (vector<geos::geomgraph::Edge*>::iterator i=edges->begin();i<edges->end();i++) {
+		geos::geomgraph::Edge *e=*i;
 		//int maxSegmentIndex=e->getMaximumSegmentIndex();
 		bool isClosed=e->isClosed();
 		const Coordinate *p0=&e->getCoordinate(0);

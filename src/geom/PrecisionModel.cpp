@@ -57,7 +57,7 @@ PrecisionModel::makePrecise(double val) const
     }
     if (modelType == FIXED) {
         // Use whatever happens to be the default rounding method
-        const double ret = util::round(val*scale)/scale;
+        const double ret = geos::util::round(val*scale)/scale;
         return ret;
     }
     // modelType == FLOATING - no rounding necessary
@@ -179,7 +179,7 @@ PrecisionModel::setScale(double newScale)
 		// throw IllegalArgumentException
 {
 	if ( newScale <= 0 )
-		throw util::IllegalArgumentException("PrecisionModel scale cannot be 0");
+		throw geos::util::IllegalArgumentException("PrecisionModel scale cannot be 0");
     scale = std::fabs(newScale);
 }
 

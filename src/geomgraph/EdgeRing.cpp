@@ -175,7 +175,7 @@ EdgeRing::addHole(EdgeRing *edgeRing)
 }
 
 /*public*/
-Polygon*
+geos::geom::Polygon*
 EdgeRing::toPolygon(const GeometryFactory* p_geometryFactory)
 {
 	testInvariant();

@@ -41,14 +41,14 @@ namespace relate { // geos.operation.relate
 
 RelateNodeGraph::RelateNodeGraph()
 {
-	nodes=new NodeMap(RelateNodeFactory::instance());
+	nodes=new geos::geomgraph::NodeMap(RelateNodeFactory::instance());
 }
 
 RelateNodeGraph::~RelateNodeGraph() {
 	delete nodes;
 }
 
-map<Coordinate*,Node*,CoordinateLessThen>&
+map<Coordinate*, geos::geomgraph::Node*,CoordinateLessThen>&
 RelateNodeGraph::getNodeMap()
 {
 	return nodes->nodeMap;
@@ -92,11 +92,11 @@ void
 RelateNodeGraph::computeIntersectionNodes(GeometryGraph *geomGraph,
 	int argIndex)
 {
-	vector<Edge*> *edges=geomGraph->getEdges();
-	vector<Edge*>::iterator edgeIt=edges->begin();
+	vector<geos::geomgraph::Edge*> *edges=geomGraph->getEdges();
+	vector<geos::geomgraph::Edge*>::iterator edgeIt=edges->begin();
 	for( ; edgeIt<edges->end(); ++edgeIt)
 	{
-		Edge *e=*edgeIt;
+		geos::geomgraph::Edge *e=*edgeIt;
 		int eLoc=e->getLabel().getLocation(argIndex);
 		EdgeIntersectionList &eiL=e->getEdgeIntersectionList();
 		EdgeIntersectionList::iterator eiIt=eiL.begin();
@@ -126,11 +126,11 @@ RelateNodeGraph::computeIntersectionNodes(GeometryGraph *geomGraph,
 void
 RelateNodeGraph::copyNodesAndLabels(GeometryGraph *geomGraph,int argIndex)
 {
-	map<Coordinate*,Node*,CoordinateLessThen> &nMap=geomGraph->getNodeMap()->nodeMap;
-	map<Coordinate*,Node*,CoordinateLessThen>::iterator nodeIt;
+	map<Coordinate*, geos::geomgraph::Node*,CoordinateLessThen> &nMap=geomGraph->getNodeMap()->nodeMap;
+	map<Coordinate*, geos::geomgraph::Node*,CoordinateLessThen>::iterator nodeIt;
 	for(nodeIt=nMap.begin();nodeIt!=nMap.end();nodeIt++) {
-		Node *graphNode=nodeIt->second;
-		Node *newNode=nodes->addNode(graphNode->getCoordinate());
+		geos::geomgraph::Node *graphNode=nodeIt->second;
+		geos::geomgraph::Node *newNode=nodes->addNode(graphNode->getCoordinate());
 		newNode->setLabel(argIndex,graphNode->getLabel().getLocation(argIndex));
 		//node.print(System.out);
 	}

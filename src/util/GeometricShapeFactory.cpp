@@ -82,7 +82,7 @@ GeometricShapeFactory::setHeight(double height)
 	dim.setHeight(height);
 }
 
-Polygon*
+geos::geom::Polygon*
 GeometricShapeFactory::createRectangle()
 {
 	int i;
@@ -119,11 +119,11 @@ GeometricShapeFactory::createRectangle()
 	(*vc)[ipt++] = (*vc)[0];
 	CoordinateSequence *cs = geomFact->getCoordinateSequenceFactory()->create(vc);
 	LinearRing* ring=geomFact->createLinearRing(cs);
-	Polygon* poly=geomFact->createPolygon(ring, nullptr);
+	geos::geom::Polygon* poly=geomFact->createPolygon(ring, nullptr);
 	return poly;
 }
 
-Polygon*
+geos::geom::Polygon*
 GeometricShapeFactory::createCircle()
 {
 	std::unique_ptr<Envelope> env ( dim.getEnvelope() );
@@ -145,7 +145,7 @@ GeometricShapeFactory::createCircle()
 	(*pts)[iPt++] = (*pts)[0];
 	CoordinateSequence *cs=geomFact->getCoordinateSequenceFactory()->create(pts);
 	LinearRing* ring = geomFact->createLinearRing(cs);
-	Polygon* poly=geomFact->createPolygon(ring,nullptr);
+	geos::geom::Polygon* poly=geomFact->createPolygon(ring,nullptr);
 	return poly;
 }
 
@@ -178,7 +178,7 @@ GeometricShapeFactory::createArc(double startAng, double angExtent)
 	return line;
 }
 
-Polygon*
+geos::geom::Polygon*
 GeometricShapeFactory::createArcPolygon(double startAng, double angExtent)
 {
 	std::unique_ptr<Envelope> env ( dim.getEnvelope() );
@@ -207,7 +207,7 @@ GeometricShapeFactory::createArcPolygon(double startAng, double angExtent)
 
 	CoordinateSequence *cs = geomFact->getCoordinateSequenceFactory()->create(pts);
 	LinearRing* ring = geomFact->createLinearRing(cs);
-	Polygon* geom = geomFact->createPolygon(ring, nullptr);
+	geos::geom::Polygon* geom = geomFact->createPolygon(ring, nullptr);
 	return geom;
 }
 

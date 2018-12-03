@@ -63,7 +63,7 @@ MCIndexNoder::intersectChains()
 
 	SegmentOverlapAction overlapAction(*segInt);
 
-	for (vector<MonotoneChain*>::iterator
+	for (vector<geos::index::chain::MonotoneChain*>::iterator
 			i=monoChains.begin(), iEnd=monoChains.end();
 			i != iEnd;
 			++i)
@@ -71,7 +71,7 @@ MCIndexNoder::intersectChains()
 
 		GEOS_CHECK_FOR_INTERRUPTS();
 
-		MonotoneChain* queryChain = *i;
+		geos::index::chain::MonotoneChain* queryChain = *i;
 		assert(queryChain);
 		vector<void*> overlapChains;
 		index.query(&(queryChain->getEnvelope()), overlapChains);
@@ -80,7 +80,7 @@ MCIndexNoder::intersectChains()
 			j != jEnd;
 			++j)
 		{
-			MonotoneChain* testChain = static_cast<MonotoneChain*>(*j);
+			geos::index::chain::MonotoneChain* testChain = static_cast<geos::index::chain::MonotoneChain*>(*j);
 			assert(testChain);
 
 			/**
@@ -105,17 +105,17 @@ MCIndexNoder::intersectChains()
 void
 MCIndexNoder::add(SegmentString* segStr)
 {
-	vector<MonotoneChain*> segChains;
+	vector<geos::index::chain::MonotoneChain*> segChains;
 
 	// segChains will contain nelwy allocated MonotoneChain objects
 	MonotoneChainBuilder::getChains(segStr->getCoordinates(),
 			segStr, segChains);
 
-	for(vector<MonotoneChain*>::iterator
+	for(vector<geos::index::chain::MonotoneChain*>::iterator
 			it=segChains.begin(), iEnd=segChains.end();
 			it!=iEnd; ++it)
 	{
-		MonotoneChain* mc = *it;
+		geos::index::chain::MonotoneChain* mc = *it;
 		assert(mc);
 
 		mc->setId(idCounter++);
@@ -128,7 +128,7 @@ MCIndexNoder::add(SegmentString* segStr)
 
 MCIndexNoder::~MCIndexNoder()
 {
-	for(vector<MonotoneChain*>::iterator
+	for(vector<geos::index::chain::MonotoneChain*>::iterator
 			i=monoChains.begin(), iEnd=monoChains.end();
 			i!=iEnd; ++i)
 	{
@@ -138,8 +138,8 @@ MCIndexNoder::~MCIndexNoder()
 }
 
 void
-MCIndexNoder::SegmentOverlapAction::overlap(MonotoneChain& mc1, size_t start1,
-		MonotoneChain& mc2, size_t start2)
+MCIndexNoder::SegmentOverlapAction::overlap(geos::index::chain::MonotoneChain& mc1, size_t start1,
+	geos::index::chain::MonotoneChain& mc2, size_t start2)
 {
 	SegmentString* ss1 = const_cast<SegmentString*>(
 		static_cast<const SegmentString *>(mc1.getContext())

@@ -54,7 +54,7 @@ Point::Point(CoordinateSequence *newCoords, const GeometryFactory *factory)
 	}
 	if (coordinates->getSize() != 1)
 	{
-		throw util::IllegalArgumentException("Point coordinate list must contain a single element");
+		throw geos::util::IllegalArgumentException("Point coordinate list must contain a single element");
 	}
 }
 
@@ -112,7 +112,7 @@ double
 Point::getX() const
 {
 	if (isEmpty()) {
-		throw util::UnsupportedOperationException("getX called on empty Point\n");
+		throw geos::util::UnsupportedOperationException("getX called on empty Point\n");
 	}
 	return getCoordinate()->x;
 }
@@ -121,7 +121,7 @@ double
 Point::getY() const
 {
 	if (isEmpty()) {
-		throw util::UnsupportedOperationException("getY called on empty Point\n");
+		throw geos::util::UnsupportedOperationException("getY called on empty Point\n");
 	}
 	return getCoordinate()->y;
 }
@@ -130,7 +130,7 @@ double
 Point::getZ() const
 {
 	if (isEmpty()) {
-		throw util::UnsupportedOperationException("getZ called on empty Point\n");
+		throw geos::util::UnsupportedOperationException("getZ called on empty Point\n");
 	}
 	return getCoordinate()->z;
 }

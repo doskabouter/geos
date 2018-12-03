@@ -105,11 +105,11 @@ ConnectedInteriorTester::isInteriorsConnected()
 {
 
 	// node the edges, in case holes touch the shell
-	std::vector<Edge*> splitEdges;
+	std::vector<geos::geomgraph::Edge*> splitEdges;
 	geomGraph.computeSplitEdges(&splitEdges);
 
 	// form the edges into rings
-	PlanarGraph graph(operation::overlay::OverlayNodeFactory::instance());
+	geos::geomgraph::PlanarGraph graph(operation::overlay::OverlayNodeFactory::instance());
 
 	graph.addEdges(splitEdges);
 	setInteriorEdgesInResult(graph);
@@ -176,14 +176,14 @@ ConnectedInteriorTester::isInteriorsConnected()
 }
 
 void
-ConnectedInteriorTester::setInteriorEdgesInResult(PlanarGraph &graph)
+ConnectedInteriorTester::setInteriorEdgesInResult(geos::geomgraph::PlanarGraph &graph)
 {
 	std::vector<EdgeEnd*> *ee=graph.getEdgeEnds();
 	for(size_t i=0, n=ee->size(); i<n; ++i)
 	{
 		// Unexpected non DirectedEdge in graphEdgeEnds
-		assert(dynamic_cast<DirectedEdge*>((*ee)[i]));
-		DirectedEdge *de=static_cast<DirectedEdge*>((*ee)[i]);
+		assert(dynamic_cast<geos::geomgraph::DirectedEdge*>((*ee)[i]));
+		geos::geomgraph::DirectedEdge *de=static_cast<geos::geomgraph::DirectedEdge*>((*ee)[i]);
 		if ( de->getLabel().getLocation(0, Position::RIGHT) == Location::INTERIOR)
 		{
 			de->setInResult(true);
@@ -208,7 +208,7 @@ ConnectedInteriorTester::buildEdgeRings(std::vector<EdgeEnd*> *dirEdges,
 #ifdef GEOS_CAST_PARANOIA
 		assert(dynamic_cast<DirectedEdge*>((*dirEdges)[i]));
 #endif
-		DirectedEdge *de=static_cast<DirectedEdge*>((*dirEdges)[i]);
+		geos::geomgraph::DirectedEdge *de=static_cast<geos::geomgraph::DirectedEdge*>((*dirEdges)[i]);
 
 #if GEOS_DEBUG
 		cerr << "DirectedEdge " << i << ": " << de->print() << endl;
@@ -239,9 +239,9 @@ ConnectedInteriorTester::buildEdgeRings(std::vector<EdgeEnd*> *dirEdges,
  * of the input polygons.  Note only ONE ring gets marked for each shell.
  */
 void
-ConnectedInteriorTester::visitShellInteriors(const Geometry *g, PlanarGraph &graph)
+ConnectedInteriorTester::visitShellInteriors(const Geometry *g, geos::geomgraph::PlanarGraph &graph)
 {
-	if (const Polygon* p=dynamic_cast<const Polygon*>(g))
+	if (const geos::geom::Polygon* p=dynamic_cast<const geos::geom::Polygon*>(g))
 	{
 		visitInteriorRing(p->getExteriorRing(), graph);
 	}
@@ -249,14 +249,14 @@ ConnectedInteriorTester::visitShellInteriors(const Geometry *g, PlanarGraph &gra
 	if (const MultiPolygon* mp=dynamic_cast<const MultiPolygon*>(g))
 	{
 		for (size_t i=0, n=mp->getNumGeometries(); i<n; i++) {
-			const Polygon *p=dynamic_cast<const Polygon*>(mp->getGeometryN(i));
+			const geos::geom::Polygon *p=dynamic_cast<const geos::geom::Polygon*>(mp->getGeometryN(i));
 			visitInteriorRing(p->getExteriorRing(), graph);
 		}
 	}
 }
 
 void
-ConnectedInteriorTester::visitInteriorRing(const LineString *ring, PlanarGraph &graph)
+ConnectedInteriorTester::visitInteriorRing(const LineString *ring, geos::geomgraph::PlanarGraph &graph)
 {
 	// can't visit an empty ring
 	if(ring->isEmpty()) return;
@@ -269,9 +269,9 @@ ConnectedInteriorTester::visitInteriorRing(const LineString *ring, PlanarGraph &
 	 * Need special check since the first point may be repeated.
 	 */
     	const Coordinate& pt1=findDifferentPoint(pts, pt0);
-	Edge *e=graph.findEdgeInSameDirection(pt0, pt1);
-	DirectedEdge *de=static_cast<DirectedEdge*>(graph.findEdgeEnd(e));
-	DirectedEdge *intDe=nullptr;
+			geos::geomgraph::Edge *e=graph.findEdgeInSameDirection(pt0, pt1);
+			geos::geomgraph::DirectedEdge *de=static_cast<geos::geomgraph::DirectedEdge*>(graph.findEdgeEnd(e));
+			geos::geomgraph::DirectedEdge *intDe=nullptr;
 	if (de->getLabel().getLocation(0,Position::RIGHT)==Location::INTERIOR) {
 		intDe=de;
 	} else if (de->getSym()->getLabel().getLocation(0,Position::RIGHT)==Location::INTERIOR) {
@@ -283,10 +283,10 @@ ConnectedInteriorTester::visitInteriorRing(const LineString *ring, PlanarGraph &
 
 
 void
-ConnectedInteriorTester::visitLinkedDirectedEdges(DirectedEdge *start)
+ConnectedInteriorTester::visitLinkedDirectedEdges(geos::geomgraph::DirectedEdge *start)
 {
-	DirectedEdge *startDe=start;
-	DirectedEdge *de=start;
+	geos::geomgraph::DirectedEdge *startDe=start;
+	geos::geomgraph::DirectedEdge *de=start;
 	//Debug.println(de);
 	do {
 		// found null Directed Edge
@@ -318,8 +318,8 @@ ConnectedInteriorTester::hasUnvisitedShellEdge(std::vector<EdgeRing*> *edgeRings
 		// don't check hole rings
 		if (er->isHole()) continue;
 
-		std::vector<DirectedEdge*>& edges=er->getEdges();
-		DirectedEdge *de=edges[0];
+		std::vector<geos::geomgraph::DirectedEdge*>& edges=er->getEdges();
+		geos::geomgraph::DirectedEdge *de=edges[0];
 		assert(de);
 
 		// don't check CW rings which are holes
@@ -332,7 +332,7 @@ ConnectedInteriorTester::hasUnvisitedShellEdge(std::vector<EdgeRing*> *edgeRings
 		 * If any are unvisited, this is a disconnected part
 		 * of the interior
 		 */
-		for(std::vector<DirectedEdge*>::iterator
+		for(std::vector<geos::geomgraph::DirectedEdge*>::iterator
 			jt=edges.begin(), jtEnd=edges.end();
 			jt != jtEnd;
 			++jt)

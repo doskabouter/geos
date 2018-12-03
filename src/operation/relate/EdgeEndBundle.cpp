@@ -158,7 +158,7 @@ void EdgeEndBundle::computeLabelSide(int geomIndex, int side) {
 }
 
 void EdgeEndBundle::updateIM(IntersectionMatrix& im) {
-	Edge::updateIM(label, im);
+	geos::geomgraph::Edge::updateIM(label, im);
 }
 
 string EdgeEndBundle::print() const {

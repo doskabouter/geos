@@ -140,7 +140,7 @@ OffsetCurveSetBuilder::add(const Geometry& g)
     return;
   }
 
-	const Polygon *poly = dynamic_cast<const Polygon *>(&g);
+	const geos::geom::Polygon *poly = dynamic_cast<const geos::geom::Polygon *>(&g);
 	if ( poly ) {
 		addPolygon(poly);
 		return;
@@ -214,7 +214,7 @@ OffsetCurveSetBuilder::addLineString(const LineString *line)
 
 /*private*/
 void
-OffsetCurveSetBuilder::addPolygon(const Polygon *p)
+OffsetCurveSetBuilder::addPolygon(const geos::geom::Polygon *p)
 {
 	double offsetDistance=distance;
 

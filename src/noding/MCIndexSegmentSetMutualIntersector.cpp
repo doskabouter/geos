@@ -45,7 +45,7 @@ MCIndexSegmentSetMutualIntersector::addToIndex(SegmentString* segStr)
     chainStore.reserve(chainStore.size() + n);
     for (MonoChains::size_type i = 0; i < n; i++)
     {
-        MonotoneChain * mc = segChains[i];
+        geos::index::chain::MonotoneChain * mc = segChains[i];
         mc->setId(indexCounter++);
         index->insert(&(mc->getEnvelope()), mc);
         chainStore.push_back(mc);
@@ -61,14 +61,14 @@ MCIndexSegmentSetMutualIntersector::intersectChains()
 
     for (MonoChains::size_type i = 0, ni = monoChains.size(); i < ni; ++i)
     {
-        MonotoneChain * queryChain = (MonotoneChain *)monoChains[i];
+			geos::index::chain::MonotoneChain * queryChain = (geos::index::chain::MonotoneChain *)monoChains[i];
 
         std::vector<void*> overlapChains;
         index->query( &(queryChain->getEnvelope()), overlapChains);
 
         for (std::size_t j = 0, nj = overlapChains.size(); j < nj; j++)
         {
-            MonotoneChain * testChain = (MonotoneChain *)(overlapChains[j]);
+					geos::index::chain::MonotoneChain * testChain = (geos::index::chain::MonotoneChain *)(overlapChains[j]);
 
             queryChain->computeOverlaps( testChain, &overlapAction);
             nOverlaps++;
@@ -90,7 +90,7 @@ MCIndexSegmentSetMutualIntersector::addToMonoChains(SegmentString* segStr)
     monoChains.reserve(monoChains.size() + n);
     for (MonoChains::size_type i = 0; i < n; i++)
     {
-        MonotoneChain* mc = segChains[i];
+			geos::index::chain::MonotoneChain* mc = segChains[i];
         mc->setId( processCounter++ );
         monoChains.push_back(mc);
     }
@@ -162,7 +162,7 @@ MCIndexSegmentSetMutualIntersector::process(SegmentString::ConstVect * segString
 /* public */
 void
 MCIndexSegmentSetMutualIntersector::SegmentOverlapAction::overlap(
-	MonotoneChain& mc1, size_t start1, MonotoneChain& mc2, size_t start2)
+	geos::index::chain::MonotoneChain& mc1, size_t start1, geos::index::chain::MonotoneChain& mc2, size_t start2)
 {
     SegmentString * ss1 = (SegmentString *)(mc1.getContext());
     SegmentString * ss2 = (SegmentString *)(mc2.getContext());

@@ -430,7 +430,7 @@ RectangleIntersection::clip_polygon_to_linestrings(const geom::Polygon * g,
       // clones
 		  LinearRing *hole = dynamic_cast<LinearRing*>(g->getInteriorRingN(i)->clone());
       // becomes exterior
-		  Polygon *poly = _gf->createPolygon(hole, nullptr);
+			geos::geom::Polygon *poly = _gf->createPolygon(hole, nullptr);
 		  toParts.add(poly);
 		}
 	  else if(!parts.empty())
@@ -507,7 +507,7 @@ RectangleIntersection::clip_polygon_to_polygons(const geom::Polygon * g,
 		{
       // becomes exterior
 		  LinearRing *cloned = dynamic_cast<LinearRing*>(hole->clone());
-		  Polygon *poly = _gf->createPolygon(cloned, nullptr);
+			geos::geom::Polygon *poly = _gf->createPolygon(cloned, nullptr);
 		  parts.add(poly);
 		}
 	  else
@@ -652,7 +652,7 @@ RectangleIntersection::clip_geom(const geom::Geometry * g,
 	  return clip_linestring(p3, parts, rect);
 	else if ( const MultiLineString* p4 = dynamic_cast<const geom::MultiLineString *>(g) )
 	  return clip_multilinestring(p4, parts, rect);
-	else if ( const Polygon* p5 = dynamic_cast<const geom::Polygon *>(g) )
+	else if ( const geos::geom::Polygon* p5 = dynamic_cast<const geom::Polygon *>(g) )
 	  return clip_polygon(p5, parts, rect, keep_polygons);
 	else if ( const MultiPolygon* p6 = dynamic_cast<const geom::MultiPolygon *>(g) )
 	  return clip_multipolygon(p6, parts, rect, keep_polygons);

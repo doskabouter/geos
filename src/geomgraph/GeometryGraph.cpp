@@ -184,7 +184,7 @@ GeometryGraph::add(const Geometry *g)
 		useBoundaryDeterminationRule = false;
 
 
-	if ( const Polygon* x1 = dynamic_cast<const Polygon*>(g) )
+	if ( const geos::geom::Polygon* x1 = dynamic_cast<const geos::geom::Polygon*>(g) )
 		addPolygon(x1);
 
 	// LineString also handles LinearRings
@@ -276,7 +276,7 @@ GeometryGraph::addPolygonRing(const LinearRing *lr, int cwLeft, int cwRight)
 }
 
 void
-GeometryGraph::addPolygon(const Polygon *p)
+GeometryGraph::addPolygon(const geos::geom::Polygon *p)
 {
 	const LineString* ls;
 	const LinearRing* lr;
@@ -385,7 +385,7 @@ GeometryGraph::computeSelfNodes(LineIntersector &li,
 	}
 
 	bool isRings = dynamic_cast<const LinearRing*>(parentGeom)
-	    || dynamic_cast<const Polygon*>(parentGeom)
+	    || dynamic_cast<const geos::geom::Polygon*>(parentGeom)
 	    || dynamic_cast<const MultiPolygon*>(parentGeom);
 
 	bool computeAllSegments = computeRingSelfNodes || ! isRings;

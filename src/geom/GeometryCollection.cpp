@@ -67,7 +67,7 @@ GeometryCollection::GeometryCollection(vector<Geometry *> *newGeoms, const Geome
 		return;
 	}
 	if (hasNullElements(newGeoms)) {
-		throw  util::IllegalArgumentException("geometries must not contain null elements\n");
+		throw  geos::util::IllegalArgumentException("geometries must not contain null elements\n");
 		return;
 	}
 	geometries=newGeoms;
@@ -180,7 +180,7 @@ GeometryCollection::getGeometryType() const
 Geometry*
 GeometryCollection::getBoundary() const
 {
-	throw util::IllegalArgumentException("Operation not supported by GeometryCollection\n");
+	throw geos::util::IllegalArgumentException("Operation not supported by GeometryCollection\n");
 }
 
 bool

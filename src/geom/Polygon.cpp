@@ -79,7 +79,7 @@ Polygon::Polygon(LinearRing *newShell, vector<Geometry *> *newHoles,
 	else
 	{
 		if (newHoles != nullptr && newShell->isEmpty() && hasNonEmptyElements(newHoles)) {
-			throw util::IllegalArgumentException("shell is empty but holes are not");
+			throw geos::util::IllegalArgumentException("shell is empty but holes are not");
 		}
 		shell=newShell;
 	}
@@ -91,11 +91,11 @@ Polygon::Polygon(LinearRing *newShell, vector<Geometry *> *newHoles,
 	else
 	{
 		if (hasNullElements(newHoles)) {
-			throw util::IllegalArgumentException("holes must not contain null elements");
+			throw geos::util::IllegalArgumentException("holes must not contain null elements");
 		}
 		for (size_t i=0; i<newHoles->size(); i++)
 			if ( (*newHoles)[i]->getGeometryTypeId() != GEOS_LINEARRING)
-				throw util::IllegalArgumentException("holes must be LinearRings");
+				throw geos::util::IllegalArgumentException("holes must be LinearRings");
 		holes=newHoles;
 	}
 }

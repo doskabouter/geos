@@ -46,7 +46,7 @@ namespace overlay { // geos.operation.overlay
 
 /*public*/
 // CGAlgorithms obsoleted
-MaximalEdgeRing::MaximalEdgeRing(DirectedEdge *start,
+MaximalEdgeRing::MaximalEdgeRing(geos::geomgraph::DirectedEdge *start,
 		const GeometryFactory *p_geometryFactory)
 	// throw(const TopologyException &)
 	:
@@ -68,15 +68,15 @@ MaximalEdgeRing::~MaximalEdgeRing()
 }
 
 /*public*/
-DirectedEdge*
-MaximalEdgeRing::getNext(DirectedEdge *de)
+geos::geomgraph::DirectedEdge*
+MaximalEdgeRing::getNext(geos::geomgraph::DirectedEdge *de)
 {
 	return de->getNext();
 }
 
 /*public*/
 void
-MaximalEdgeRing::setEdgeRing(DirectedEdge *de,EdgeRing *er)
+MaximalEdgeRing::setEdgeRing(geos::geomgraph::DirectedEdge *de,EdgeRing *er)
 {
 	de->setEdgeRing(er);
 }
@@ -85,13 +85,13 @@ MaximalEdgeRing::setEdgeRing(DirectedEdge *de,EdgeRing *er)
 void
 MaximalEdgeRing::linkDirectedEdgesForMinimalEdgeRings()
 {
-	DirectedEdge* de=startDe;
+	geos::geomgraph::DirectedEdge* de=startDe;
 	do {
-		Node* node=de->getNode();
+		geos::geomgraph::Node* node=de->getNode();
 		EdgeEndStar* ees = node->getEdges();
 
-		assert(dynamic_cast<DirectedEdgeStar*>(ees));
-		DirectedEdgeStar* des = static_cast<DirectedEdgeStar*>(ees);
+		assert(dynamic_cast<geos::geomgraph::DirectedEdgeStar*>(ees));
+		geos::geomgraph::DirectedEdgeStar* des = static_cast<geos::geomgraph::DirectedEdgeStar*>(ees);
 
 		des->linkMinimalDirectedEdges(this);
 
@@ -113,7 +113,7 @@ MaximalEdgeRing::buildMinimalRings()
 void
 MaximalEdgeRing::buildMinimalRings(vector<MinimalEdgeRing*>& minEdgeRings)
 {
-	DirectedEdge *de=startDe;
+	geos::geomgraph::DirectedEdge *de=startDe;
 	do {
 		if(de->getMinEdgeRing()==nullptr) {
 			MinimalEdgeRing *minEr=new MinimalEdgeRing(de, geometryFactory);
@@ -127,7 +127,7 @@ MaximalEdgeRing::buildMinimalRings(vector<MinimalEdgeRing*>& minEdgeRings)
 void
 MaximalEdgeRing::buildMinimalRings(vector<EdgeRing*>& minEdgeRings)
 {
-	DirectedEdge *de=startDe;
+	geos::geomgraph::DirectedEdge *de=startDe;
 	do {
 		if(de->getMinEdgeRing()==nullptr) {
 			MinimalEdgeRing *minEr=new MinimalEdgeRing(de, geometryFactory);

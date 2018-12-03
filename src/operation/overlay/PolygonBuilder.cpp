@@ -65,7 +65,7 @@ PolygonBuilder::~PolygonBuilder()
 
 /*public*/
 void
-PolygonBuilder::add(PlanarGraph *graph)
+PolygonBuilder::add(geos::geomgraph::PlanarGraph *graph)
 	//throw(TopologyException *)
 {
 	const vector<EdgeEnd*>* eeptr=graph->getEdgeEnds();
@@ -78,21 +78,21 @@ PolygonBuilder::add(PlanarGraph *graph)
 	cerr << __FUNCTION__ << ": PlanarGraph has " << eeSize << " EdgeEnds" << endl;
 #endif
 
-	vector<DirectedEdge*> dirEdges(eeSize);
+	vector<geos::geomgraph::DirectedEdge*> dirEdges(eeSize);
 	for(size_t i=0; i<eeSize; ++i)
 	{
-		assert(dynamic_cast<DirectedEdge*>(ee[i]));
-		DirectedEdge* de = static_cast<DirectedEdge*>(ee[i]);
+		assert(dynamic_cast<geos::geomgraph::DirectedEdge*>(ee[i]));
+		geos::geomgraph::DirectedEdge* de = static_cast<geos::geomgraph::DirectedEdge*>(ee[i]);
 		dirEdges[i]=de;
 	}
 
-	NodeMap::container &nodeMap=graph->getNodeMap()->nodeMap;
-	vector<Node*> nodes;
+	geos::geomgraph::NodeMap::container &nodeMap=graph->getNodeMap()->nodeMap;
+	vector<geos::geomgraph::Node*> nodes;
 	nodes.reserve(nodeMap.size());
-	for ( NodeMap::iterator it=nodeMap.begin(), itEnd=nodeMap.end();
+	for (geos::geomgraph::NodeMap::iterator it=nodeMap.begin(), itEnd=nodeMap.end();
 		it != itEnd; ++it )
 	{
-		Node *node=it->second;
+		geos::geomgraph::Node *node=it->second;
 		nodes.push_back(node);
 	}
 
@@ -101,11 +101,11 @@ PolygonBuilder::add(PlanarGraph *graph)
 
 /*public*/
 void
-PolygonBuilder::add(const vector<DirectedEdge*> *dirEdges,
-		const vector<Node*> *nodes)
+PolygonBuilder::add(const vector<geos::geomgraph::DirectedEdge*> *dirEdges,
+		const vector<geos::geomgraph::Node*> *nodes)
 		//throw(TopologyException *)
 {
-	PlanarGraph::linkResultDirectedEdges(nodes->begin(), nodes->end());
+	geos::geomgraph::PlanarGraph::linkResultDirectedEdges(nodes->begin(), nodes->end());
 
 	vector<MaximalEdgeRing*> maxEdgeRings;
 	buildMaximalEdgeRings(dirEdges, maxEdgeRings);
@@ -131,7 +131,7 @@ PolygonBuilder::getPolygons()
 
 /*private*/
 void
-PolygonBuilder::buildMaximalEdgeRings(const vector<DirectedEdge*> *dirEdges,
+PolygonBuilder::buildMaximalEdgeRings(const vector<geos::geomgraph::DirectedEdge*> *dirEdges,
   vector<MaximalEdgeRing*> &maxEdgeRings)
 	// throw(const TopologyException &)
 {
@@ -143,7 +143,7 @@ PolygonBuilder::buildMaximalEdgeRings(const vector<DirectedEdge*> *dirEdges,
 
 	for(size_t i=0, n=dirEdges->size(); i<n; i++)
 	{
-		DirectedEdge *de=(*dirEdges)[i];
+		geos::geomgraph::DirectedEdge *de=(*dirEdges)[i];
 #if GEOS_DEBUG
 	cerr << "  dirEdge " << i << endl
 	     << de->printEdge() << endl
@@ -374,7 +374,7 @@ PolygonBuilder::computePolygons(vector<EdgeRing*>& newShellList)
 	for(size_t i=0, n=newShellList.size(); i<n; i++)
 	{
 		EdgeRing *er=newShellList[i];
-		Polygon *poly=er->toPolygon(geometryFactory);
+		geos::geom::Polygon *poly=er->toPolygon(geometryFactory);
 		resultPolyList->push_back(poly);
 	}
 	return resultPolyList;

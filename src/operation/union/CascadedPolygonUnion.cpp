@@ -52,7 +52,7 @@ check_valid(const geos::geom::Geometry& g, const std::string& label, bool doThro
 
   if ( dynamic_cast<const geos::geom::Lineal*>(&g) ) {
     if ( ! validOnly ) {
-      operation::IsSimpleOp sop(g, algorithm::BoundaryNodeRule::getBoundaryEndPoint());
+      operation::IsSimpleOp sop(g, geos::algorithm::BoundaryNodeRule::getBoundaryEndPoint());
       if ( ! sop.isSimple() )
       {
         if ( doThrow ) {

@@ -159,7 +159,7 @@ DirectedEdge::compareDirection(const DirectedEdge *e) const
 	if (quadrant < e->quadrant) return -1;
 	// vectors are in the same quadrant - check relative orientation of direction vectors
 	// this is > e if it is CCW of e
-	return algorithm::CGAlgorithms::computeOrientation(e->p0,e->p1,p1);
+	return geos::algorithm::CGAlgorithms::computeOrientation(e->p0,e->p1,p1);
 }
 
 /*public*/

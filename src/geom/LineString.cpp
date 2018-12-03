@@ -81,7 +81,7 @@ LineString::validateConstruction()
 
 	if (points->size()==1)
 	{
-		throw util::IllegalArgumentException("point array must contain 0 or >1 elements\n");
+		throw geos::util::IllegalArgumentException("point array must contain 0 or >1 elements\n");
 	}
 }
 

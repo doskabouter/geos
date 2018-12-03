@@ -287,7 +287,7 @@ WKBReader::readLinearRing()
 	return factory.createLinearRing(pts);
 }
 
-Polygon *
+geos::geom::Polygon *
 WKBReader::readPolygon()
 {
 	int numRings = dis.readInt();
@@ -382,7 +382,7 @@ WKBReader::readMultiPolygon()
 		for (int i=0; i<numGeoms; i++)
 		{
 			Geometry *g = readGeometry();
-			if (!dynamic_cast<Polygon *>(g))
+			if (!dynamic_cast<geos::geom::Polygon *>(g))
 			{
 				stringstream err;
 				err << BAD_GEOM_TYPE_MSG << " Polygon";

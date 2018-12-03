@@ -159,11 +159,11 @@ Polygonizer::add(const LineString *line)
  * Gets the list of polygons formed by the polygonization.
  * @return a collection of Polygons
  */
-vector<Polygon*>*
+vector<geos::geom::Polygon*>*
 Polygonizer::getPolygons()
 {
 	polygonize();
-	vector<Polygon *> *ret = polyList;
+	vector<geos::geom::Polygon *> *ret = polyList;
 	polyList = nullptr;
 	return ret;
 }
@@ -199,7 +199,7 @@ Polygonizer::polygonize()
 	// check if already computed
 	if (polyList!=nullptr) return;
 
-	polyList=new vector<Polygon*>();
+	polyList=new vector<geos::geom::Polygon*>();
 
 	// if no geometries were supplied it's possible graph could be null
 	if (graph==nullptr) return;

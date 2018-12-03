@@ -61,12 +61,12 @@ PointBuilder::build(OverlayOp::OpCode opCode)
 void
 PointBuilder::extractNonCoveredResultNodes(OverlayOp::OpCode opCode)
 {
-	map<Coordinate*,Node*,CoordinateLessThen> &nodeMap =
+	map<Coordinate*, geos::geomgraph::Node*,CoordinateLessThen> &nodeMap =
 		op->getGraph().getNodeMap()->nodeMap;
-	map<Coordinate*,Node*,CoordinateLessThen>::iterator it=nodeMap.begin();
+	map<Coordinate*, geos::geomgraph::Node*,CoordinateLessThen>::iterator it=nodeMap.begin();
 	for (; it!=nodeMap.end(); ++it)
 	{
-		Node *n=it->second;
+		geos::geomgraph::Node *n=it->second;
 
 		// filter out nodes which are known to be in the result
 		if (n->isInResult()) continue;
@@ -92,7 +92,7 @@ PointBuilder::extractNonCoveredResultNodes(OverlayOp::OpCode opCode)
 }
 
 void
-PointBuilder::filterCoveredNodeToPoint(const Node *n)
+PointBuilder::filterCoveredNodeToPoint(const geos::geomgraph::Node *n)
 {
 	const Coordinate& coord=n->getCoordinate();
 	if(!op->isCoveredByLA(coord)) {

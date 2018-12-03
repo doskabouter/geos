@@ -41,7 +41,7 @@ char Location::toLocationSymbol(int locationValue) {
 		default:
 			ostringstream s;
 			s<<"Unknown location value: "<<locationValue;
-			throw util::IllegalArgumentException(s.str());
+			throw geos::util::IllegalArgumentException(s.str());
 	}
 }
 

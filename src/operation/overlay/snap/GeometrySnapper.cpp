@@ -133,7 +133,7 @@ GeometrySnapper::snapToSelf(double snapTolerance, bool cleanResult)
 
 	GeomPtr result = snapTrans->transform(&srcGeom);
 
-	if (cleanResult && ( dynamic_cast<const Polygon*>(result.get()) ||
+	if (cleanResult && ( dynamic_cast<const geos::geom::Polygon*>(result.get()) ||
 	                     dynamic_cast<const MultiPolygon*>(result.get()) ) )
 	{
 		// TODO: use better cleaning approach

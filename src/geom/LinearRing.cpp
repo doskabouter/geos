@@ -65,7 +65,7 @@ LinearRing::validateConstruction()
 
 	if ( !LineString::isClosed() )
 	{
-		throw util::IllegalArgumentException(
+		throw geos::util::IllegalArgumentException(
 		  "Points of LinearRing do not form a closed linestring"
 		);
 	}
@@ -75,7 +75,7 @@ LinearRing::validateConstruction()
 		std::ostringstream os;
 		os << "Invalid number of points in LinearRing found "
 		   << points->getSize() << " - must be 0 or >= 4";
-		throw util::IllegalArgumentException(os.str());
+		throw geos::util::IllegalArgumentException(os.str());
 	}
 }
 

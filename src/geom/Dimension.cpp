@@ -47,7 +47,7 @@ char Dimension::toDimensionSymbol(int dimensionValue) {
 		default:
 			ostringstream s;
 			s<<"Unknown dimension value: "<<dimensionValue<<endl;
-			throw  util::IllegalArgumentException(s.str());
+			throw  geos::util::IllegalArgumentException(s.str());
 	}
 }
 
@@ -78,7 +78,7 @@ int Dimension::toDimensionValue(char dimensionSymbol) {
 		default:
 			ostringstream s;
 			s<<"Unknown dimension symbol: "<<dimensionSymbol<<endl;
-			throw  util::IllegalArgumentException(s.str());
+			throw  geos::util::IllegalArgumentException(s.str());
 	}
 }
 

@@ -80,7 +80,7 @@ IntersectionMatrix::matches(const string& requiredDimensionSymbols) const
 		ostringstream s;
 		s << "IllegalArgumentException: Should be length 9, is "
 				<< "[" << requiredDimensionSymbols << "] instead" << endl;
-		throw util::IllegalArgumentException(s.str());
+		throw geos::util::IllegalArgumentException(s.str());
 	}
 	for (int ai = 0; ai < firstDim; ai++) {
 		for (int bi = 0; bi < secondDim; bi++) {

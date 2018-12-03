@@ -88,7 +88,7 @@ RelateComputer::computeIM()
             << std::endl;
 #endif
 
-	std::unique_ptr<SegmentIntersector> si1 (
+	std::unique_ptr<geos::geomgraph::SegmentIntersector> si1 (
 		(*arg)[0]->computeSelfNodes(&li,false)
 	);
 
@@ -100,7 +100,7 @@ RelateComputer::computeIM()
             << std::endl;
 #endif
 
-	std::unique_ptr<SegmentIntersector> si2 (
+	std::unique_ptr<geos::geomgraph::SegmentIntersector> si2 (
 		(*arg)[1]->computeSelfNodes(&li,false)
 	);
 
@@ -113,7 +113,7 @@ RelateComputer::computeIM()
 #endif
 
 	// compute intersections between edges of the two input geometries
-	std::unique_ptr< SegmentIntersector> intersector (
+	std::unique_ptr< geos::geomgraph::SegmentIntersector> intersector (
     (*arg)[0]->computeEdgeIntersections((*arg)[1], &li,false)
   );
 
@@ -251,7 +251,7 @@ RelateComputer::insertEdgeEnds(std::vector<EdgeEnd*> *ee)
 
 /* private */
 void
-RelateComputer::computeProperIntersectionIM(SegmentIntersector *intersector,IntersectionMatrix *imX)
+RelateComputer::computeProperIntersectionIM(geos::geomgraph::SegmentIntersector *intersector,IntersectionMatrix *imX)
 {
 	// If a proper intersection is found, we can set a lower bound on the IM.
 	int dimA=(*arg)[0]->getGeometry()->getDimension();
@@ -306,13 +306,13 @@ RelateComputer::computeProperIntersectionIM(SegmentIntersector *intersector,Inte
 void
 RelateComputer::copyNodesAndLabels(int argIndex)
 {
-	const NodeMap* nm = (*arg)[argIndex]->getNodeMap();
-	NodeMap::const_iterator nodeIt=nm->begin(), nodeEnd=nm->end();
+	const geos::geomgraph::NodeMap* nm = (*arg)[argIndex]->getNodeMap();
+	geos::geomgraph::NodeMap::const_iterator nodeIt=nm->begin(), nodeEnd=nm->end();
 
 	for( ; nodeIt!=nodeEnd; nodeIt++)
 	{
-		Node *graphNode=nodeIt->second;
-		Node *newNode=nodes.addNode(graphNode->getCoordinate());
+		geos::geomgraph::Node *graphNode=nodeIt->second;
+		geos::geomgraph::Node *newNode=nodes.addNode(graphNode->getCoordinate());
 		newNode->setLabel(argIndex,
 				graphNode->getLabel().getLocation(argIndex));
 		//node.print(System.out);
@@ -331,10 +331,10 @@ RelateComputer::copyNodesAndLabels(int argIndex)
 void
 RelateComputer::computeIntersectionNodes(int argIndex)
 {
-	std::vector<Edge*> *edges=(*arg)[argIndex]->getEdges();
-	for(std::vector<Edge*>::iterator i=edges->begin();i<edges->end();i++)
+	std::vector<geos::geomgraph::Edge*> *edges=(*arg)[argIndex]->getEdges();
+	for(std::vector<geos::geomgraph::Edge*>::iterator i=edges->begin();i<edges->end();i++)
 	{
-		Edge *e=*i;
+		geos::geomgraph::Edge *e=*i;
 		int eLoc=e->getLabel().getLocation(argIndex);
 		EdgeIntersectionList &eiL=e->getEdgeIntersectionList();
 		EdgeIntersectionList::iterator it=eiL.begin();
@@ -367,9 +367,9 @@ RelateComputer::computeIntersectionNodes(int argIndex)
 void
 RelateComputer::labelIntersectionNodes(int argIndex)
 {
-	std::vector<Edge*> *edges=(*arg)[argIndex]->getEdges();
-	for(std::vector<Edge*>::iterator i=edges->begin();i<edges->end();i++) {
-		Edge *e=*i;
+	std::vector<geos::geomgraph::Edge*> *edges=(*arg)[argIndex]->getEdges();
+	for(std::vector<geos::geomgraph::Edge*>::iterator i=edges->begin();i<edges->end();i++) {
+		geos::geomgraph::Edge *e=*i;
 		int eLoc=e->getLabel().getLocation(argIndex);
 		EdgeIntersectionList &eiL=e->getEdgeIntersectionList();
 		EdgeIntersectionList::iterator eiIt=eiL.begin();
@@ -409,8 +409,8 @@ RelateComputer::computeDisjointIM(IntersectionMatrix *imX)
 void
 RelateComputer::labelNodeEdges()
 {
-	std::map<Coordinate*,Node*,CoordinateLessThen> &nMap=nodes.nodeMap;
-	std::map<Coordinate*,Node*,CoordinateLessThen>::iterator nodeIt;
+	std::map<Coordinate*, geos::geomgraph::Node*,CoordinateLessThen> &nMap=nodes.nodeMap;
+	std::map<Coordinate*, geos::geomgraph::Node*,CoordinateLessThen>::iterator nodeIt;
 	for(nodeIt=nMap.begin();nodeIt!=nMap.end();nodeIt++)
 	{
 		assert(dynamic_cast<RelateNode*>(nodeIt->second));
@@ -431,15 +431,15 @@ void
 RelateComputer::updateIM(IntersectionMatrix& imX)
 {
 	//Debug.println(im);
-	std::vector<Edge *>::iterator ei=isolatedEdges.begin();
+	std::vector<geos::geomgraph::Edge *>::iterator ei=isolatedEdges.begin();
 	for ( ; ei<isolatedEdges.end(); ++ei)
 	{
-		Edge *e=*ei;
+		geos::geomgraph::Edge *e=*ei;
 		e->GraphComponent::updateIM(imX);
 		//Debug.println(im);
 	}
-	std::map<Coordinate*,Node*,CoordinateLessThen> &nMap=nodes.nodeMap;
-	std::map<Coordinate*,Node*,CoordinateLessThen>::iterator nodeIt;
+	std::map<Coordinate*, geos::geomgraph::Node*,CoordinateLessThen> &nMap=nodes.nodeMap;
+	std::map<Coordinate*, geos::geomgraph::Node*,CoordinateLessThen>::iterator nodeIt;
 	for(nodeIt=nMap.begin();nodeIt!=nMap.end();nodeIt++) {
 		RelateNode *node=(RelateNode*) nodeIt->second;
 		node->updateIM(imX);
@@ -454,9 +454,9 @@ RelateComputer::updateIM(IntersectionMatrix& imX)
 void
 RelateComputer::labelIsolatedEdges(int thisIndex,int targetIndex)
 {
-	std::vector<Edge*> *edges=(*arg)[thisIndex]->getEdges();
-	for(std::vector<Edge*>::iterator i=edges->begin();i<edges->end();i++) {
-		Edge *e=*i;
+	std::vector<geos::geomgraph::Edge*> *edges=(*arg)[thisIndex]->getEdges();
+	for(std::vector<geos::geomgraph::Edge*>::iterator i=edges->begin();i<edges->end();i++) {
+		geos::geomgraph::Edge *e=*i;
 		if (e->isIsolated()) {
 			labelIsolatedEdge(e,targetIndex,(*arg)[targetIndex]->getGeometry());
 			isolatedEdges.push_back(e);
@@ -466,7 +466,7 @@ RelateComputer::labelIsolatedEdges(int thisIndex,int targetIndex)
 
 /* private */
 void
-RelateComputer::labelIsolatedEdge(Edge *e, int targetIndex, const Geometry *target)
+RelateComputer::labelIsolatedEdge(geos::geomgraph::Edge *e, int targetIndex, const Geometry *target)
 {
 	// this won't work for GeometryCollections with both dim 2 and 1 geoms
 	if (target->getDimension()>0) {
@@ -485,10 +485,10 @@ RelateComputer::labelIsolatedEdge(Edge *e, int targetIndex, const Geometry *targ
 void
 RelateComputer::labelIsolatedNodes()
 {
-	NodeMap::iterator nodeIt=nodes.begin(), nodeEnd=nodes.end();
+	geos::geomgraph::NodeMap::iterator nodeIt=nodes.begin(), nodeEnd=nodes.end();
 	for( ; nodeIt!=nodeEnd; nodeIt++)
 	{
-		Node *n=nodeIt->second;
+		geos::geomgraph::Node *n=nodeIt->second;
 		const Label& label = n->getLabel();
 		// isolated nodes should always have at least one geometry in their label
 		assert(label.getGeometryCount()>0); // node with empty label found
@@ -503,7 +503,7 @@ RelateComputer::labelIsolatedNodes()
 
 /* private */
 void
-RelateComputer::labelIsolatedNode(Node *n,int targetIndex)
+RelateComputer::labelIsolatedNode(geos::geomgraph::Node *n,int targetIndex)
 {
 	int loc=ptLocator.locate(n->getCoordinate(),
 			(*arg)[targetIndex]->getGeometry());

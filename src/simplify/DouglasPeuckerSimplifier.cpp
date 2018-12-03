@@ -56,7 +56,7 @@ protected:
 			const Geometry* parent) override;
 
 	Geometry::Ptr transformPolygon(
-			const Polygon* geom,
+			const geos::geom::Polygon* geom,
 			const Geometry* parent) override;
 
 	Geometry::Ptr transformMultiPolygon(
@@ -120,7 +120,7 @@ DPTransformer::transformCoordinates(
 
 Geometry::Ptr
 DPTransformer::transformPolygon(
-		const Polygon* geom,
+		const geos::geom::Polygon* geom,
 		const Geometry* parent)
 {
 

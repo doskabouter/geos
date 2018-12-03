@@ -49,7 +49,7 @@ ConnectedElementPointFilter::getCoordinates(const Geometry *geom)
 void ConnectedElementPointFilter::filter_ro(const Geometry *geom) {
 	if ((typeid(*geom)==typeid(Point)) ||
 		(typeid(*geom)==typeid(LineString)) ||
-		(typeid(*geom)==typeid(Polygon)))
+		(typeid(*geom)==typeid(geos::geom::Polygon)))
 			pts->push_back(geom->getCoordinate());
 }
 

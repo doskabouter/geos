@@ -86,15 +86,15 @@ void
 LineBuilder::findCoveredLineEdges()
 {
 // first set covered for all L edges at nodes which have A edges too
-	map<Coordinate*,Node*,CoordinateLessThen> &nodeMap=op->getGraph().getNodeMap()->nodeMap;
-	map<Coordinate*,Node*,CoordinateLessThen>::iterator it=nodeMap.begin();
-	map<Coordinate*,Node*,CoordinateLessThen>::iterator endIt=nodeMap.end();
+	map<Coordinate*, geos::geomgraph::Node*,CoordinateLessThen> &nodeMap=op->getGraph().getNodeMap()->nodeMap;
+	map<Coordinate*, geos::geomgraph::Node*,CoordinateLessThen>::iterator it=nodeMap.begin();
+	map<Coordinate*, geos::geomgraph::Node*,CoordinateLessThen>::iterator endIt=nodeMap.end();
 	for ( ; it!=endIt; ++it)
 	{
-		Node *node=it->second;
+		geos::geomgraph::Node *node=it->second;
 		//node.print(System.out);
-		assert(dynamic_cast<DirectedEdgeStar*>(node->getEdges()));
-		DirectedEdgeStar* des=static_cast<DirectedEdgeStar*>(node->getEdges());
+		assert(dynamic_cast<geos::geomgraph::DirectedEdgeStar*>(node->getEdges()));
+		geos::geomgraph::DirectedEdgeStar* des=static_cast<geos::geomgraph::DirectedEdgeStar*>(node->getEdges());
 		des->findCoveredLineEdges();
 		//((DirectedEdgeStar*)node->getEdges())->findCoveredLineEdges();
 	}
@@ -106,9 +106,9 @@ LineBuilder::findCoveredLineEdges()
 	vector<EdgeEnd*> *ee=op->getGraph().getEdgeEnds();
 	for(size_t i=0, s=ee->size(); i<s; ++i)
 	{
-		assert(dynamic_cast<DirectedEdge*>((*ee)[i]));
-		DirectedEdge *de=static_cast<DirectedEdge*>((*ee)[i]);
-		Edge *e=de->getEdge();
+		assert(dynamic_cast<geos::geomgraph::DirectedEdge*>((*ee)[i]));
+		geos::geomgraph::DirectedEdge *de=static_cast<geos::geomgraph::DirectedEdge*>((*ee)[i]);
+		geos::geomgraph::Edge *e=de->getEdge();
 		if (de->isLineEdge() && !e->isCoveredSet()) {
 			bool isCovered=op->isCoveredByA(de->getCoordinate());
 			e->setCovered(isCovered);
@@ -122,16 +122,16 @@ LineBuilder::collectLines(OverlayOp::OpCode opCode)
 	vector<EdgeEnd*> *ee=op->getGraph().getEdgeEnds();
 	for(size_t i=0, s=ee->size(); i<s; ++i)
 	{
-		assert(dynamic_cast<DirectedEdge*>((*ee)[i]));
-		DirectedEdge *de=static_cast<DirectedEdge*>((*ee)[i]);
+		assert(dynamic_cast<geos::geomgraph::DirectedEdge*>((*ee)[i]));
+		geos::geomgraph::DirectedEdge *de=static_cast<geos::geomgraph::DirectedEdge*>((*ee)[i]);
 		collectLineEdge(de, opCode, &lineEdgesList);
 		collectBoundaryTouchEdge(de, opCode, &lineEdgesList);
 	}
 }
 
 void
-LineBuilder::collectLineEdge(DirectedEdge *de, OverlayOp::OpCode opCode,
-		vector<Edge*> *edges)
+LineBuilder::collectLineEdge(geos::geomgraph::DirectedEdge *de, OverlayOp::OpCode opCode,
+		vector<geos::geomgraph::Edge*> *edges)
 {
 
   // include L edges which are in the result
@@ -139,7 +139,7 @@ LineBuilder::collectLineEdge(DirectedEdge *de, OverlayOp::OpCode opCode,
 
     const Label& label = de->getLabel();
 
-    Edge *e = de->getEdge();
+		geos::geomgraph::Edge *e = de->getEdge();
 
     if (!de->isVisited()
           && OverlayOp::isResultOfOp(label, opCode)
@@ -157,8 +157,8 @@ LineBuilder::collectLineEdge(DirectedEdge *de, OverlayOp::OpCode opCode,
 
 /*private*/
 void
-LineBuilder::collectBoundaryTouchEdge(DirectedEdge *de,
-		OverlayOp::OpCode opCode, vector<Edge*> *edges)
+LineBuilder::collectBoundaryTouchEdge(geos::geomgraph::DirectedEdge *de,
+		OverlayOp::OpCode opCode, vector<geos::geomgraph::Edge*> *edges)
 {
 	if (de->isLineEdge()) return;  // only interested in area edges
 	if (de->isVisited()) return;  // already processed
@@ -190,7 +190,7 @@ LineBuilder::buildLines(OverlayOp::OpCode /* opCode */)
 {
 	for(size_t i=0, s=lineEdgesList.size(); i<s; ++i)
 	{
-		Edge *e=lineEdgesList[i];
+		geos::geomgraph::Edge *e=lineEdgesList[i];
 		CoordinateSequence *cs = e->getCoordinates()->clone();
 #if COMPUTE_Z
 		propagateZ(cs);
@@ -288,11 +288,11 @@ LineBuilder::propagateZ(CoordinateSequence *cs)
 
 
 void
-LineBuilder::labelIsolatedLines(vector<Edge*> *edgesList)
+LineBuilder::labelIsolatedLines(vector<geos::geomgraph::Edge*> *edgesList)
 {
 	for(size_t i=0, s=edgesList->size(); i<s; ++i)
 	{
-		Edge *e=(*edgesList)[i];
+		geos::geomgraph::Edge *e=(*edgesList)[i];
 		const Label& label = e->getLabel();
 		//n.print(System.out);
 		if (e->isIsolated()) {
@@ -308,7 +308,7 @@ LineBuilder::labelIsolatedLines(vector<Edge*> *edgesList)
  * Label an isolated node with its relationship to the target geometry.
  */
 void
-LineBuilder::labelIsolatedLine(Edge *e, int targetIndex)
+LineBuilder::labelIsolatedLine(geos::geomgraph::Edge *e, int targetIndex)
 {
   int loc = ptLocator->locate( e->getCoordinate(),
                                op->getArgGeometry(targetIndex) );

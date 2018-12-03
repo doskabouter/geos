@@ -50,7 +50,7 @@ NodeBase::NodeBase()
 
 NodeBase::~NodeBase() {
 	for(int i=0;i<(int)items->size();i++) {
-		delete (MonotoneChain*)(*items)[i];
+		delete (geos::index::chain::MonotoneChain*)(*items)[i];
 	}
 	delete items;
 	delete subnode[0];

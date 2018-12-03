@@ -35,11 +35,11 @@ namespace operation { // geos.operation
 namespace relate { // geos.operation.relate
 
 vector<EdgeEnd*> *
-EdgeEndBuilder::computeEdgeEnds(vector<Edge*> *edges)
+EdgeEndBuilder::computeEdgeEnds(vector<geos::geomgraph::Edge*> *edges)
 {
 	vector<EdgeEnd*> *l=new vector<EdgeEnd*>();
-	for(vector<Edge*>::iterator i=edges->begin();i<edges->end();i++) {
-		Edge *e=*i;
+	for(vector<geos::geomgraph::Edge*>::iterator i=edges->begin();i<edges->end();i++) {
+		geos::geomgraph::Edge *e=*i;
 		computeEdgeEnds(e,l);
 	}
 	return l;
@@ -50,7 +50,7 @@ EdgeEndBuilder::computeEdgeEnds(vector<Edge*> *edges)
  * Edge (if any) and inserts them into the graph.
  */
 void
-EdgeEndBuilder::computeEdgeEnds(Edge *edge, vector<EdgeEnd*> *l)
+EdgeEndBuilder::computeEdgeEnds(geos::geomgraph::Edge *edge, vector<EdgeEnd*> *l)
 {
 	EdgeIntersectionList &eiList=edge->getEdgeIntersectionList();
 	//Debug.print(eiList);
@@ -90,7 +90,7 @@ EdgeEndBuilder::computeEdgeEnds(Edge *edge, vector<EdgeEnd*> *l)
  * eiCurr will always be an EdgeIntersection, but eiPrev may be null.
  */
 void
-EdgeEndBuilder::createEdgeEndForPrev(Edge *edge, vector<EdgeEnd*> *l,
+EdgeEndBuilder::createEdgeEndForPrev(geos::geomgraph::Edge *edge, vector<EdgeEnd*> *l,
 		EdgeIntersection *eiCurr, EdgeIntersection *eiPrev)
 {
 	auto iPrev = eiCurr->segmentIndex;
@@ -120,7 +120,7 @@ EdgeEndBuilder::createEdgeEndForPrev(Edge *edge, vector<EdgeEnd*> *l,
  * eiCurr will always be an EdgeIntersection, but eiNext may be null.
  */
 void
-EdgeEndBuilder::createEdgeEndForNext(Edge *edge, vector<EdgeEnd*> *l,
+EdgeEndBuilder::createEdgeEndForNext(geos::geomgraph::Edge *edge, vector<EdgeEnd*> *l,
 		EdgeIntersection *eiCurr, EdgeIntersection *eiNext)
 {
 	size_t iNext = eiCurr->segmentIndex + 1;
