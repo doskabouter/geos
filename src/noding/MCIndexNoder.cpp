@@ -105,24 +105,21 @@ MCIndexNoder::intersectChains()
 void
 MCIndexNoder::add(SegmentString* segStr)
 {
-	vector<geos::index::chain::MonotoneChain*> segChains;
+	vector<std::unique_ptr<MonotoneChain>> segChains;
 
 	// segChains will contain nelwy allocated MonotoneChain objects
 	MonotoneChainBuilder::getChains(segStr->getCoordinates(),
 			segStr, segChains);
 
-	for(vector<geos::index::chain::MonotoneChain*>::iterator
-			it=segChains.begin(), iEnd=segChains.end();
-			it!=iEnd; ++it)
+	for(auto& mc : segChains)
 	{
-		geos::index::chain::MonotoneChain* mc = *it;
 		assert(mc);
 
 		mc->setId(idCounter++);
-		index.insert(&(mc->getEnvelope()), mc);
+		index.insert(&(mc->getEnvelope()), mc.get());
 
 		// MonotoneChain objects deletion delegated to destructor
-		monoChains.push_back(mc);
+		monoChains.push_back(mc.release());
 	}
 }
 

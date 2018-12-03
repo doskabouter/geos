@@ -40,6 +40,7 @@
 #include <geos/operation/buffer/BufferBuilder.h>
 #include <geos/operation/buffer/BufferParameters.h>
 #include <geos/operation/buffer/BufferOp.h>
+#include <geos/precision/MinimumClearance.h>
 #include <geos/util.h>
 #include <geos/util/Interrupt.h>
 //#include <geos/geomgraph.h>
@@ -99,27 +100,27 @@ std::unique_ptr<const PreparedGeometry> prepare( const geom::Geometry *g ) {
 // Copy from geos/util/math.cpp
 double java_math_round(double val)
 {
-	double n;
-	double f = std::fabs(std::modf(val, &n));
+    double n;
+    double f = std::fabs(std::modf(val, &n));
 
-	if (val >= 0)
-	{
-		if (f < 0.5) {
-			return std::floor(val);
-		} else if (f > 0.5) {
-			return std::ceil(val);
-		} else {
-			return (n + 1.0);
-		}
-	} else {
-		if (f < 0.5) {
-			return std::ceil(val);
-		} else if (f > 0.5) {
-			return std::floor(val);
-		} else {
-			return n;
-		}
-	}
+    if (val >= 0)
+    {
+        if (f < 0.5) {
+            return std::floor(val);
+        } else if (f > 0.5) {
+            return std::ceil(val);
+        } else {
+            return (n + 1.0);
+        }
+    } else {
+        if (f < 0.5) {
+            return std::ceil(val);
+        } else if (f > 0.5) {
+            return std::floor(val);
+        } else {
+            return n;
+        }
+    }
 } // java_math_round
 
 
@@ -136,51 +137,16 @@ const char * getIndent( unsigned int numIndents )
 
 
 
-void dump_to_stdout( const TiXmlNode * pParent, unsigned int indent = 0 )
+void dump_to_stdout( const tinyxml2::XMLNode * pParent, unsigned int indent = 0 )
 {
     if ( !pParent ) return;
 
-    const TiXmlText *pText;
-    int t = pParent->Type();
     printf( "%s", getIndent( indent));
 
-    switch ( t )
-    {
-    case TiXmlNode::DOCUMENT:
-        printf( "Document" );
-        break;
+    tinyxml2::XMLPrinter printer;
+    pParent->Accept(&printer);
 
-    case TiXmlNode::ELEMENT:
-        printf( "Element \"%s\"", pParent->Value() );
-        break;
 
-    case TiXmlNode::COMMENT:
-        printf( "Comment: \"%s\"", pParent->Value());
-        break;
-
-    case TiXmlNode::UNKNOWN:
-        printf( "Unknown" );
-        break;
-
-    case TiXmlNode::TEXT:
-        pText = pParent->ToText();
-        printf( "Text: [%s]", pText->Value() );
-        break;
-
-    case TiXmlNode::DECLARATION:
-        printf( "Declaration" );
-        break;
-    default:
-        break;
-    }
-    printf( "\n" );
-
-    const TiXmlNode * pChild;
-
-    for ( pChild = pParent->FirstChild(); pChild != nullptr; pChild = pChild->NextSibling())
-    {
-        dump_to_stdout( pChild, indent+2 );
-    }
 }
 
 }
@@ -231,10 +197,10 @@ checkBufferSuccess(geom::Geometry const& gRes, geom::Geometry const& gRealRes, d
         if ( gRes.getGeometryTypeId() != gRealRes.getGeometryTypeId() )
         {
             std::cerr << "Expected result is of type "
-                << gRes.getGeometryType()
-                << "; obtained result is of type "
-                << gRealRes.getGeometryType()
-                << std::endl;
+                      << gRes.getGeometryType()
+                      << "; obtained result is of type "
+                      << gRealRes.getGeometryType()
+                      << std::endl;
             success=0;
             break;
         }
@@ -243,19 +209,19 @@ checkBufferSuccess(geom::Geometry const& gRes, geom::Geometry const& gRealRes, d
         if ( gRes.getDimension() != 2 )
         {
             std::cerr << "Don't know how to validate "
-                << "result of buffer operation "
-                << "when expected result is not an "
-                << "areal type."
-                << std::endl;
+                      << "result of buffer operation "
+                      << "when expected result is not an "
+                      << "areal type."
+                      << std::endl;
         }
 
 
         geos::xmltester::BufferResultMatcher matcher;
         if ( ! matcher.isBufferResultMatch(gRealRes,
-                           gRes,
-                           dist) )
+                                           gRes,
+                                           dist) )
         {
-std::cerr << "BufferResultMatcher FAILED" << std::endl;
+            std::cerr << "BufferResultMatcher FAILED" << std::endl;
             success=0;
             break;
         }
@@ -268,7 +234,7 @@ std::cerr << "BufferResultMatcher FAILED" << std::endl;
 
 static int
 checkSingleSidedBufferSuccess(geom::Geometry& gRes,
-        geom::Geometry& gRealRes, double dist)
+                              geom::Geometry& gRealRes, double dist)
 {
     int success = 1;
     do
@@ -277,20 +243,20 @@ checkSingleSidedBufferSuccess(geom::Geometry& gRes,
         if ( gRes.getGeometryTypeId() != gRealRes.getGeometryTypeId() )
         {
             std::cerr << "Expected result is of type "
-                << gRes.getGeometryType()
-                << "; obtained result is of type "
-                << gRealRes.getGeometryType()
-                << std::endl;
+                      << gRes.getGeometryType()
+                      << "; obtained result is of type "
+                      << gRealRes.getGeometryType()
+                      << std::endl;
             success=0;
             break;
         }
 
         geos::xmltester::SingleSidedBufferResultMatcher matcher;
         if ( ! matcher.isBufferResultMatch(gRealRes,
-                           gRes,
-                           dist) )
+                                           gRes,
+                                           dist) )
         {
-std::cerr << "SingleSidedBufferResultMatcher FAILED" << std::endl;
+            std::cerr << "SingleSidedBufferResultMatcher FAILED" << std::endl;
             success=0;
             break;
         }
@@ -305,7 +271,6 @@ XMLTester::XMLTester()
     :
     gA(nullptr),
     gB(nullptr),
-    gT(nullptr),
     pm(nullptr),
     factory(nullptr),
     wktreader(nullptr),
@@ -378,7 +343,7 @@ XMLTester::printTest(bool success, const std::string& expected_result, const std
         std::cout << *curr_file <<":";
         std::cout << " case" << caseCount << ":";
         std::cout << " test" << testCount << ": "
-            << opSignature;
+                  << opSignature;
         std::cout << ": " << (success?"ok.":"failed.");
         std::cout << " (" << std::setprecision(15) << java_math_round(prof.getTot()/1000) << " ms)" << std::endl;
 
@@ -412,36 +377,38 @@ XMLTester::run(const std::string &source)
     {
         std::cout << "CREATE TABLE \"" << normalize_filename(*curr_file) << "\""
                   << "( caseno integer, testno integer, "
-              << " operation varchar, description varchar, "
-              << " a geometry, b geometry, expected geometry, "
-              << " obtained geometry, result bool )"
+                  << " operation varchar, description varchar, "
+                  << " a geometry, b geometry, expected geometry, "
+                  << " obtained geometry, result bool )"
 
-              // NOTE: qgis 0.7.4 require oids for proper operations.
-              //       The 'WITH OIDS' parameter is supported back to
-              //       PostgreSQL 7.2, so if you run an older version
-              //       rebuild with the next line commented out.
-              << " WITH OIDS"
+                  // NOTE: qgis 0.7.4 require oids for proper operations.
+                  //       The 'WITH OIDS' parameter is supported back to
+                  //       PostgreSQL 7.2, so if you run an older version
+                  //       rebuild with the next line commented out.
+                  << " WITH OIDS"
 
-              << ";" << std::endl;
+                  << ";" << std::endl;
     }
 
     ++testFileCount;
 
     caseCount=0;
 
-    if ( ! xml.LoadFile(source.c_str()) )
+    tinyxml2::XMLError e = xml.LoadFile(source.c_str());
+    if ( e )
     {
         std::stringstream err;
-        err << "Could not load " << source << ": " << xml.ErrorDesc();
+        err << "Could not load " << source << ": " << e << std::endl;
+        xml.~XMLDocument(); // Deallocates various internal pools
         throw runtime_error(err.str());
     }
 
     //dump_to_stdout(&xml);
 
-    const TiXmlNode* node = xml.FirstChild("run");
+    const tinyxml2::XMLNode* node = xml.FirstChildElement("run");
 
     if ( ! node )
-      throw(runtime_error("Document has no childs"));
+        throw(runtime_error("Document has no childs"));
 
     parseRun(node);
 
@@ -463,7 +430,7 @@ XMLTester::resetCounters()
 }
 
 void
-XMLTester::parseRun(const TiXmlNode* node)
+XMLTester::parseRun(const tinyxml2::XMLNode* node)
 {
     using geos::geom::PrecisionModel;
 
@@ -472,7 +439,7 @@ XMLTester::parseRun(const TiXmlNode* node)
     //dump_to_stdout(node);
 
     // Look for precisionModel element
-    const TiXmlElement* el = node->FirstChildElement("precisionModel");
+    const tinyxml2::XMLElement* el = node->FirstChildElement("precisionModel");
     if ( el ) parsePrecisionModel(el);
     else pm.reset(new PrecisionModel());
 
@@ -480,7 +447,7 @@ XMLTester::parseRun(const TiXmlNode* node)
     usePrepared = false;
     el = node->FirstChildElement("geometryOperation");
     if ( el ) {
-        const TiXmlNode* txt = el->FirstChild();
+        const tinyxml2::XMLNode* txt = el->FirstChild();
         if ( txt ) {
             std::string op = trimBlanks(txt->Value());
             if ( op.find("PreparedGeometryOperation") ) {
@@ -507,10 +474,10 @@ XMLTester::parseRun(const TiXmlNode* node)
     wkbreader.reset(new io::WKBReader(*factory));
     wkbwriter.reset(new io::WKBWriter());
 
-    const TiXmlNode* casenode;
-    for ( casenode = node->FirstChild("case");
-          casenode;
-          casenode = casenode->NextSibling("case") )
+    const tinyxml2::XMLNode* casenode;
+    for ( casenode = node->FirstChildElement("case");
+            casenode;
+            casenode = casenode->NextSiblingElement("case") )
     {
         try {
             parseCase(casenode);
@@ -522,7 +489,7 @@ XMLTester::parseRun(const TiXmlNode* node)
 }
 
 void
-XMLTester::parsePrecisionModel(const TiXmlElement* el)
+XMLTester::parsePrecisionModel(const tinyxml2::XMLElement* el)
 {
     using geos::geom::PrecisionModel;
 
@@ -572,11 +539,11 @@ XMLTester::testValid(const geom::Geometry* g, const std::string& label)
     {
         operation::valid::TopologyValidationError *err = ivo.getValidationError();
         std::cerr << *curr_file << ":"
-              << " case" << caseCount << ":"
-              << " test" << testCount << ": "
-              << opSignature << ": "
-              << " invalid geometry (" << label
-              << "): " << err->toString() << std::endl;
+                  << " case" << caseCount << ":"
+                  << " test" << testCount << ": "
+                  << opSignature << ": "
+                  << " invalid geometry (" << label
+                  << "): " << err->toString() << std::endl;
     }
     return valid;
 }
@@ -601,27 +568,27 @@ XMLTester::parseGeometry(const std::string &in, const char* label)
 
     switch (first_char)
     {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-        case 'A':
-        case 'B':
-        case 'C':
-        case 'D':
-        case 'E':
-        case 'F':
-            ret = wkbreader->readHEX(is);
-            break;
-        default:
-            ret = wktreader->read(in);
-            break;
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+    case 'A':
+    case 'B':
+    case 'C':
+    case 'D':
+    case 'E':
+    case 'F':
+        ret = wkbreader->readHEX(is);
+        break;
+    default:
+        ret = wktreader->read(in);
+        break;
     }
 
     if ( testValidInput ) testValid(ret, std::string(label));
@@ -643,7 +610,7 @@ XMLTester::trimBlanks(const std::string &in)
 }
 
 void
-XMLTester::parseCase(const TiXmlNode* node)
+XMLTester::parseCase(const tinyxml2::XMLNode* node)
 {
     assert(node);
 
@@ -658,7 +625,7 @@ XMLTester::parseCase(const TiXmlNode* node)
     //dump_to_stdout(node);
 
     curr_case_desc.clear();
-    const TiXmlNode* txt = node->FirstChild("desc");
+    const tinyxml2::XMLNode* txt = node->FirstChildElement("desc");
     if ( txt ) {
         txt = txt->FirstChild();
         if ( txt ) curr_case_desc = trimBlanks(txt->Value());
@@ -668,12 +635,12 @@ XMLTester::parseCase(const TiXmlNode* node)
 
 
     try {
-        const TiXmlNode *el = node->FirstChild("a");
+        const tinyxml2::XMLNode *el = node->FirstChildElement("a");
         geomAin = el->FirstChild()->Value();
         geomAin = trimBlanks(geomAin);
         gA = parseGeometry(geomAin, "Geometry A");
 
-        if ( nullptr != (el = node->FirstChild("b")) )
+        if ( nullptr != (el = node->FirstChildElement("b")) )
         {
             geomBin = el->FirstChild()->Value();
             geomBin = trimBlanks(geomBin);
@@ -702,10 +669,10 @@ XMLTester::parseCase(const TiXmlNode* node)
     ++caseCount;
     testCount=0;
 
-    const TiXmlNode* testnode;
-    for ( testnode = node->FirstChild("test");
-          testnode;
-          testnode = testnode->NextSibling("test") )
+    const tinyxml2::XMLNode* testnode;
+    for ( testnode = node->FirstChildElement("test");
+            testnode;
+            testnode = testnode->NextSiblingElement("test") )
     {
         parseTest(testnode);
     }
@@ -741,7 +708,7 @@ XMLTester::printGeom(const geom::Geometry *g)
 }
 
 void
-XMLTester::parseTest(const TiXmlNode* node)
+XMLTester::parseTest(const tinyxml2::XMLNode* node)
 {
     using namespace operation::overlay;
 
@@ -757,12 +724,12 @@ XMLTester::parseTest(const TiXmlNode* node)
 
     ++testCount;
 
-    const TiXmlNode* opnode = node->FirstChild("op");
+    const tinyxml2::XMLNode* opnode = node->FirstChildElement("op");
     if ( ! opnode ) throw(runtime_error("case has no op"));
 
     //dump_to_stdout(opnode);
 
-    const TiXmlElement* opel = opnode->ToElement();
+    const tinyxml2::XMLElement* opel = opnode->ToElement();
 
     const char* tmp = opel->Attribute("name");
     if ( tmp ) opName = tmp;
@@ -779,13 +746,13 @@ XMLTester::parseTest(const TiXmlNode* node)
     tmp = opel->Attribute("arg4");
     if ( tmp ) opArg4 = tmp;
 
-    const TiXmlNode* resnode = opnode->FirstChild();
+    const tinyxml2::XMLNode* resnode = opnode->FirstChild();
     if ( ! resnode )
     {
         std::stringstream p_tmp;
         p_tmp << "op of test " << testCount
-            << " of case " << caseCount
-            << " has no expected result child";
+              << " of case " << caseCount
+              << " has no expected result child";
         throw(runtime_error(p_tmp.str()));
     }
     opRes = resnode->Value();
@@ -983,6 +950,21 @@ XMLTester::parseTest(const TiXmlNode* node)
             if (actual_result==opRes) success=1;
         }
 
+        else if (opName=="overlaps")
+        {
+            geom::Geometry *g1 = opArg1 == "B" ? gB : gA;
+            geom::Geometry *g2 = opArg2 == "B" ? gB : gA;
+
+            actual_result="false";
+            if ( usePrepared )
+            {
+                if ( prepare(g1)->overlaps(g2) ) actual_result="true";
+            }
+            else if (g1->overlaps(g2)) actual_result="true";
+
+            if (actual_result==opRes) success=1;
+        }
+
         else if (opName=="within")
         {
             geom::Geometry *g1 = opArg1 == "B" ? gB : gA;
@@ -994,6 +976,51 @@ XMLTester::parseTest(const TiXmlNode* node)
                 if ( prepare(g1)->within(g2) ) actual_result="true";
             }
             else if (g1->within(g2)) actual_result="true";
+
+            if (actual_result==opRes) success=1;
+        }
+
+        else if (opName=="touches")
+        {
+            geom::Geometry *g1 = opArg1 == "B" ? gB : gA;
+            geom::Geometry *g2 = opArg2 == "B" ? gB : gA;
+
+            actual_result="false";
+            if ( usePrepared )
+            {
+                if ( prepare(g1)->touches(g2) ) actual_result="true";
+            }
+            else if (g1->touches(g2)) actual_result="true";
+
+            if (actual_result==opRes) success=1;
+        }
+
+        else if (opName=="crosses")
+        {
+            geom::Geometry *g1 = opArg1 == "B" ? gB : gA;
+            geom::Geometry *g2 = opArg2 == "B" ? gB : gA;
+
+            actual_result="false";
+            if ( usePrepared )
+            {
+                if ( prepare(g1)->crosses(g2) ) actual_result="true";
+            }
+            else if (g1->crosses(g2)) actual_result="true";
+
+            if (actual_result==opRes) success=1;
+        }
+
+        else if (opName=="disjoint")
+        {
+            geom::Geometry *g1 = opArg1 == "B" ? gB : gA;
+            geom::Geometry *g2 = opArg2 == "B" ? gB : gA;
+
+            actual_result="false";
+            if ( usePrepared )
+            {
+                if ( prepare(g1)->disjoint(g2) ) actual_result="true";
+            }
+            else if (g1->disjoint(g2)) actual_result="true";
 
             if (actual_result==opRes) success=1;
         }
@@ -1012,6 +1039,46 @@ XMLTester::parseTest(const TiXmlNode* node)
 
             if (actual_result==opRes) success=1;
         }
+
+        // equalsTopo() is synomym for equals() in JTS
+        else if (opName=="equalstopo")
+        {
+            geom::Geometry *g1 = opArg1 == "B" ? gB : gA;
+            geom::Geometry *g2 = opArg2 == "B" ? gB : gA;
+
+            actual_result="false";
+            if (g1->equals(g2)) actual_result="true";
+
+            if (actual_result==opRes) success=1;
+        }
+
+        else if (opName=="equalsexact")
+        {
+            geom::Geometry *g1 = opArg1 == "B" ? gB : gA;
+            geom::Geometry *g2 = opArg2 == "B" ? gB : gA;
+
+            actual_result="false";
+            if (g1->equalsExact(g2)) actual_result="true";
+
+            if (actual_result==opRes) success=1;
+        }
+
+        // rather than implementing equalsnorm in the library,
+        // we just do it in this one test case for now
+        else if (opName=="equalsnorm")
+        {
+            geom::Geometry *g1 = opArg1 == "B" ? gB : gA;
+            geom::Geometry *g2 = opArg2 == "B" ? gB : gA;
+
+            g1->normalize();
+            g2->normalize();
+
+            actual_result="false";
+            if (g1->equalsExact(g2)) actual_result="true";
+
+            if (actual_result==opRes) success=1;
+        }
+
 
         else if (opName=="coveredby")
         {
@@ -1120,7 +1187,7 @@ XMLTester::parseTest(const TiXmlNode* node)
 
             BufferParameters params;
             if ( opArg3 != "" ) {
-        params.setQuadrantSegments(std::atoi(opArg3.c_str()));
+                params.setQuadrantSegments(std::atoi(opArg3.c_str()));
             }
 
 
@@ -1158,7 +1225,7 @@ XMLTester::parseTest(const TiXmlNode* node)
             BufferParameters params ;
             params.setJoinStyle( BufferParameters::JOIN_ROUND ) ;
             if ( opArg3 != "" ) {
-        params.setQuadrantSegments( std::atoi(opArg3.c_str()));
+                params.setQuadrantSegments( std::atoi(opArg3.c_str()));
             }
 
             bool leftSide = true ;
@@ -1169,14 +1236,14 @@ XMLTester::parseTest(const TiXmlNode* node)
 
             BufferBuilder bufBuilder( params ) ;
             gRealRes.reset( bufBuilder.bufferLineSingleSided(
-                                         p_gT, dist, leftSide ) ) ;
+                                p_gT, dist, leftSide ) ) ;
 
             profile.stop();
             gRealRes->normalize();
 
             // Validate the single sided buffer operation
             success = checkSingleSidedBufferSuccess(*gRes,
-                    *gRealRes, dist);
+                                                    *gRealRes, dist);
 
             actual_result=printGeom(gRealRes.get());
             expected_result=printGeom(gRes.get());
@@ -1204,7 +1271,7 @@ XMLTester::parseTest(const TiXmlNode* node)
             params.setJoinStyle(BufferParameters::JOIN_MITRE);
 
             if ( opArg3 != "" ) {
-        params.setQuadrantSegments(std::atoi(opArg3.c_str()));
+                params.setQuadrantSegments(std::atoi(opArg3.c_str()));
             }
 
             BufferOp op(p_gT, params);
@@ -1327,13 +1394,13 @@ XMLTester::parseTest(const TiXmlNode* node)
 
             if ( verbose > 1 )
             {
-        std::cerr << "Running intersection for areatest" << std::endl;
+                std::cerr << "Running intersection for areatest" << std::endl;
             }
 #ifndef USE_BINARYOP
             GeomPtr gI(gA->intersection(gB));
 #else
             GeomPtr gI = BinaryOp(gA, gB,
-                    overlayOp(OverlayOp::opINTERSECTION));
+                                  overlayOp(OverlayOp::opINTERSECTION));
 #endif
 
             if ( testValidOutput )
@@ -1343,14 +1410,14 @@ XMLTester::parseTest(const TiXmlNode* node)
 
             if ( verbose > 1 )
             {
-        std::cerr << "Running difference(A,B) for areatest" << std::endl;
+                std::cerr << "Running difference(A,B) for areatest" << std::endl;
             }
 
 #ifndef USE_BINARYOP
             GeomPtr gDab(gA->difference(gB));
 #else
             GeomPtr gDab = BinaryOp(gA, gB,
-                    overlayOp(OverlayOp::opDIFFERENCE));
+                                    overlayOp(OverlayOp::opDIFFERENCE));
 #endif
 
             if ( testValidOutput )
@@ -1360,14 +1427,14 @@ XMLTester::parseTest(const TiXmlNode* node)
 
             if ( verbose > 1 )
             {
-        std::cerr << "Running difference(B,A) for areatest" << std::endl;
+                std::cerr << "Running difference(B,A) for areatest" << std::endl;
             }
 
 #ifndef USE_BINARYOP
             GeomPtr gDba(gB->difference(gA));
 #else
             GeomPtr gDba = BinaryOp(gB, gA,
-                    overlayOp(OverlayOp::opDIFFERENCE));
+                                    overlayOp(OverlayOp::opDIFFERENCE));
 #endif
 
             if ( testValidOutput )
@@ -1377,14 +1444,14 @@ XMLTester::parseTest(const TiXmlNode* node)
 
             if ( verbose > 1 )
             {
-        std::cerr << "Running symdifference for areatest" << std::endl;
+                std::cerr << "Running symdifference for areatest" << std::endl;
             }
 
 #ifndef USE_BINARYOP
             GeomPtr gSD(gA->symDifference(gB));
 #else
             GeomPtr gSD = BinaryOp(gA, gB,
-                    overlayOp(OverlayOp::opSYMDIFFERENCE));
+                                   overlayOp(OverlayOp::opSYMDIFFERENCE));
 #endif
 
             if ( testValidOutput )
@@ -1394,14 +1461,14 @@ XMLTester::parseTest(const TiXmlNode* node)
 
             if ( verbose > 1 )
             {
-        std::cerr << "Running union for areatest" << std::endl;
+                std::cerr << "Running union for areatest" << std::endl;
             }
 
 #ifndef USE_BINARYOP
             GeomPtr gU(gA->Union(gB));
 #else
             GeomPtr gU = BinaryOp(gA, gB,
-                    overlayOp(OverlayOp::opUNION));
+                                  overlayOp(OverlayOp::opUNION));
 #endif
 
             double areaA = gA->getArea();
@@ -1471,11 +1538,55 @@ XMLTester::parseTest(const TiXmlNode* node)
             geom::Geometry *g1 = opArg1 == "B" ? gB : gA;
             geom::Geometry *g2 = opArg2 == "B" ? gB : gA;
             double distO = g1->distance(g2);
-            std::stringstream ss; ss << distO;
+            std::stringstream ss;
+            ss << distO;
             actual_result = ss.str();
 
             // TODO: Use a tolerance ?
             success = ( distO == distE ) ? 1 : 0;
+        }
+        else if (opName=="minclearance")
+        {
+            char* rest;
+            double minclearanceE = std::strtod(opRes.c_str(), &rest);
+            if ( rest == opRes.c_str() )
+            {
+                throw std::runtime_error("malformed testcase: missing expected result in 'minclearance' op");
+            }
+
+            geom::Geometry *g1 = opArg1 == "B" ? gB : gA;
+            precision::MinimumClearance mc(g1);
+
+            double minclearanceO = mc.getDistance();
+            std::stringstream ss;
+            ss << minclearanceO;
+            actual_result = ss.str();
+
+            // Hack for Inf/1.7976931348623157E308 comparison
+            if (minclearanceO > 1.7976931348623157E308)
+                minclearanceO = 1.7976931348623157E308;
+
+            // TODO: Use a tolerance ?
+            success = ( minclearanceO == minclearanceE ) ? 1 : 0;
+        }
+        else if (opName=="minclearanceline")
+        {
+
+            double tol = 0.0000001;
+            GeomPtr lineE(parseGeometry(opRes, "expected"));
+            if (!lineE)
+            {
+                throw std::runtime_error("malformed testcase: missing expected result in 'minclearanceline' op");
+            }
+
+            geom::Geometry *g1 = opArg1 == "B" ? gB : gA;
+            precision::MinimumClearance mc(g1);
+            std::unique_ptr<geom::Geometry> lineO = mc.getLine();
+            lineO.get()->normalize();
+            lineE.get()->normalize();
+
+            actual_result=printGeom(lineO.get());
+            success = lineE.get()->equalsExact(lineO.get(), tol) ? 1 : 0;
         }
 
         else
@@ -1492,8 +1603,8 @@ XMLTester::parseTest(const TiXmlNode* node)
     catch (const std::exception &e)
     {
         std::cerr<<"EXCEPTION on case "<<caseCount
-            <<" test "<<testCount<<": "<<e.what()
-            <<std::endl;
+                 <<" test "<<testCount<<": "<<e.what()
+                 <<std::endl;
         actual_result = e.what();
     }
     catch (...)
@@ -1562,7 +1673,7 @@ usage(char *me, int exitcode, std::ostream &os)
 void
 request_interrupt(int)
 {
-  geos::util::Interrupt::request();
+    geos::util::Interrupt::request();
 }
 
 int
@@ -1576,60 +1687,60 @@ main(int argC, char* argV[])
     {
 #endif
 
-    if ( argC < 2 ) usage(argV[0], 1, std::cerr);
+        if ( argC < 2 ) usage(argV[0], 1, std::cerr);
 
-    signal(15, request_interrupt);
+        signal(15, request_interrupt);
 
-    XMLTester tester;
-    tester.setVerbosityLevel(verbose);
+        XMLTester tester;
+        tester.setVerbosityLevel(verbose);
 
-    for (int i=1; i<argC; ++i)
-    {
-        // increment verbosity level
-        if ( ! std::strcmp(argV[i], "-v" ) )
+        for (int i=1; i<argC; ++i)
         {
-            ++verbose;
-            tester.setVerbosityLevel(verbose);
-            continue;
-        }
-        if ( ! std::strcmp(argV[i], "--test-valid-output" ) )
-        {
-            tester.testOutputValidity(true);
-            continue;
-        }
-        if ( ! std::strcmp(argV[i], "--sql-output" ) )
-        {
-            sql_output = true;
-            tester.setSQLOutput(sql_output);
-            continue;
-        }
-        if ( ! std::strcmp(argV[i], "--wkb-output" ) )
-        {
-            sql_output = true;
-            tester.setHEXWKBOutput(sql_output);
-            continue;
-        }
-        if ( ! std::strcmp(argV[i], "--test-valid-input" ) )
-        {
-            tester.testInputValidity(true);
-            continue;
+            // increment verbosity level
+            if ( ! std::strcmp(argV[i], "-v" ) )
+            {
+                ++verbose;
+                tester.setVerbosityLevel(verbose);
+                continue;
+            }
+            if ( ! std::strcmp(argV[i], "--test-valid-output" ) )
+            {
+                tester.testOutputValidity(true);
+                continue;
+            }
+            if ( ! std::strcmp(argV[i], "--sql-output" ) )
+            {
+                sql_output = true;
+                tester.setSQLOutput(sql_output);
+                continue;
+            }
+            if ( ! std::strcmp(argV[i], "--wkb-output" ) )
+            {
+                sql_output = true;
+                tester.setHEXWKBOutput(sql_output);
+                continue;
+            }
+            if ( ! std::strcmp(argV[i], "--test-valid-input" ) )
+            {
+                tester.testInputValidity(true);
+                continue;
+            }
+
+            std::string source = argV[i];
+
+            try {
+                tester.run(source);
+            } catch (const std::exception& exc) {
+                std::cerr<<exc.what()<<std::endl;
+            }
         }
 
-        std::string source = argV[i];
+        if ( ! sql_output ) tester.resultSummary(std::cout);
+        else tester.resultSummary(std::cerr);
 
-        try {
-            tester.run(source);
-        } catch (const std::exception& exc) {
-            std::cerr<<exc.what()<<std::endl;
-        }
-    }
+        io::Unload::Release();
 
-    if ( ! sql_output ) tester.resultSummary(std::cout);
-    else tester.resultSummary(std::cerr);
-
-    io::Unload::Release();
-
-    return tester.getFailuresCount();
+        return tester.getFailuresCount();
 
 #if defined(_MSC_VER) && defined(GEOS_TEST_USE_STACKWALKER)
     }
