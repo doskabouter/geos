@@ -227,7 +227,7 @@ IsSimpleOp::computeSimple(const geom::Geometry *geom)
 	if (dynamic_cast<const MultiLineString*>(geom))
 		return isSimpleLinearGeometry(geom);
 
-	if (dynamic_cast<const Polygon*>(geom))
+	if (dynamic_cast<const geos::geom::Polygon*>(geom))
 		return isSimplePolygonal(geom);
 
 	const MultiPoint* mp = dynamic_cast<const MultiPoint*>(geom);

@@ -693,7 +693,7 @@ OverlayOp::createEmptyResult(OverlayOp::OpCode overlayOpCode,
 Geometry*
 OverlayOp::computeGeometry(vector<Point*> *nResultPointList,
                            vector<LineString*> *nResultLineList,
-                           vector<Polygon*> *nResultPolyList,
+                           vector<geos::geom::Polygon*> *nResultPolyList,
                            OverlayOp::OpCode opCode)
 {
 	size_t nPoints=nResultPointList->size();

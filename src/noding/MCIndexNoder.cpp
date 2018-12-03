@@ -105,7 +105,7 @@ MCIndexNoder::intersectChains()
 void
 MCIndexNoder::add(SegmentString* segStr)
 {
-	vector<std::unique_ptr<MonotoneChain>> segChains;
+	vector<std::unique_ptr<chain::MonotoneChain>> segChains;
 
 	// segChains will contain nelwy allocated MonotoneChain objects
 	MonotoneChainBuilder::getChains(segStr->getCoordinates(),
