@@ -191,6 +191,17 @@ public:
 	 * @see Geometry#within(Geometry)
 	 */
 	virtual bool within(const geom::Geometry *geom) const =0;
+
+	/**
+	 * Tests whether the base {@link Geometry} is within a given geometry.
+	 *
+	 * @param geom the Geometry to test
+	 * @return true if this Geometry is within the given Geometry
+	 *
+	 * @see Geometry#within(Geometry)
+	 */
+	virtual geom::Geometry * intersection(const geom::Geometry *geom) const = 0;
+
 };
 
 

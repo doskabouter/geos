@@ -122,11 +122,24 @@ SimpleMCSweepLineIntersector::prepareEvents()
 	}
 }
 
+static int nn = 0;
+static int nmis = 0;
 void
 SimpleMCSweepLineIntersector::computeIntersections(SegmentIntersector *si)
 {
+	nn = 0;
+	nmis = 0;
 	nOverlaps=0;
 	prepareEvents();
+	/*std::map<void*,SweepLineEvent*> eventbuckets;
+	for (size_t i = 0; i < events.size(); ++i)
+	{
+		GEOS_CHECK_FOR_INTERRUPTS();
+		SweepLineEvent *ev = events[i];
+		if (eventbuckets.find(ev->edgeSet) == eventbuckets.end())
+			eventbuckets.insert(std::pair<void*,SweepLineEvent*>(ev->edgeSet, ev));
+	};
+	*/
 	for(size_t i=0; i<events.size(); ++i)
 	{
 		GEOS_CHECK_FOR_INTERRUPTS();
@@ -158,14 +171,17 @@ SimpleMCSweepLineIntersector::processOverlaps(size_t start, size_t end,
 		SweepLineEvent *ev1=events[i];
 		if (ev1->isInsert())
 		{
+			nn++;
 			MonotoneChain *mc1=(MonotoneChain*) ev1->getObject();
 			// don't compare edges in same group
 			// null group indicates that edges should be compared
-			if (ev0->edgeSet==nullptr || (ev0->edgeSet!=ev1->edgeSet))
+			if (ev0->edgeSet == nullptr || (ev0->edgeSet != ev1->edgeSet))
 			{
-				mc0->computeIntersections(mc1,si);
+				mc0->computeIntersections(mc1, si);
 				nOverlaps++;
 			}
+			else
+				nmis++;
 		}
 	}
 }

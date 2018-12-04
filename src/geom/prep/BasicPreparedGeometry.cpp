@@ -145,6 +145,12 @@ BasicPreparedGeometry::within(const geom::Geometry * g) const
 	return baseGeom->within(g);
 }
 
+geom::Geometry*
+BasicPreparedGeometry::intersection(const geom::Geometry * g) const
+{
+	return baseGeom->intersection(g);
+}
+
 std::string
 BasicPreparedGeometry::toString()
 {

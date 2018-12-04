@@ -171,6 +171,12 @@ public:
 	 */
 	bool within(const geom::Geometry * g) const override;
 
+	/**
+   * Default implementation.
+   */
+	geom::Geometry* intersection(const geom::Geometry * g) const override;
+
+
 	std::string toString();
 
 };

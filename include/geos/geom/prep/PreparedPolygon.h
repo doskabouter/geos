@@ -65,6 +65,7 @@ public:
 	bool containsProperly( const geom::Geometry* g) const override;
 	bool covers( const geom::Geometry* g) const override;
 	bool intersects( const geom::Geometry* g) const override;
+	geom::Geometry * intersection(const geom::Geometry* g) const override;
 
 };
 

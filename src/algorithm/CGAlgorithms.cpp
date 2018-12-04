@@ -35,6 +35,10 @@ using namespace std;
 
 using namespace geos::geom;
 
+
+static std::map<int, int> test;
+
+
 namespace geos {
 namespace algorithm { // geos.algorithm
 
@@ -65,6 +69,12 @@ int
 CGAlgorithms::locatePointInRing(const Coordinate& p,
 		const CoordinateSequence& ring)
 {
+	std::map<int, int>::iterator it = test.find(ring.size());
+	if (it != test.end())
+		it->second++;
+	else
+		test.insert(std::make_pair(ring.size(), 1));
+
 	return RayCrossingCounter::locatePointInRing(p, ring);
 }
 
@@ -73,6 +83,11 @@ int
 CGAlgorithms::locatePointInRing(const Coordinate& p,
 		const std::vector<const geom::Coordinate*>& ring)
 {
+	std::map<int, int>::iterator it = test.find(ring.size());
+	if (it != test.end())
+		it->second++;
+	else
+		test.insert(std::make_pair(ring.size(), 1));
 	return RayCrossingCounter::locatePointInRing(p, ring);
 }
 

@@ -22,6 +22,7 @@
 #include <geos/geom/prep/PreparedPolygonContainsProperly.h>
 #include <geos/geom/prep/PreparedPolygonCovers.h>
 #include <geos/geom/prep/PreparedPolygonIntersects.h>
+#include <geos/geom/prep/PreparedPolygonIntersection.h>
 #include <geos/geom/prep/PreparedPolygonPredicate.h>
 #include <geos/noding/FastSegmentSetIntersectionFinder.h>
 #include <geos/noding/SegmentStringUtil.h>
@@ -142,6 +143,25 @@ intersects( const geom::Geometry* g) const
     }
 
 	return PreparedPolygonIntersects::intersects( this, g);
+}
+
+geom::Geometry *
+PreparedPolygon::
+intersection(const geom::Geometry* g) const
+{
+	geom::Geometry const& geom = getGeometry();
+
+	if (geom.isEmpty() || g->isEmpty() || !envelopesIntersect(g))
+		return getGeometry().getFactory()->createGeometryCollection();
+
+	if (isRectangle)
+	{
+		geom::Polygon const& poly = dynamic_cast<geom::Polygon const&>(geom);
+
+		//return operation::predicate::RectangleIntersects::intersects(poly, *g);
+	}
+	//calculate intersections
+	return getGeometry().intersection(g);
 }
 
 } // namespace geos.geom.prep
