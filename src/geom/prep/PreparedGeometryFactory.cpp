@@ -43,7 +43,7 @@ PreparedGeometryFactory::create( const geom::Geometry * g) const
 
     if (nullptr == g)
     {
-        throw geos::util::IllegalArgumentException("PreparedGeometry constructd with null Geometry object");
+        throw geos::util::IllegalArgumentException("PreparedGeometry constructed with null Geometry object");
     }
 
 	PreparedGeometry* pg = nullptr;
