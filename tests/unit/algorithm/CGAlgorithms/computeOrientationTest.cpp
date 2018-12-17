@@ -5,6 +5,7 @@
 #include <tut/tut.hpp>
 // geos
 #include <geos/algorithm/CGAlgorithms.h>
+#include <geos/algorithm/CGAlgorithmsDD.h>
 #include <geos/geom/Coordinate.h>
 #include <geos/geom/CoordinateSequence.h>
 #include <geos/geom/CoordinateArraySequence.h>
@@ -78,6 +79,34 @@ namespace tut
 
         ensure_equals( a, b );
         ensure_equals( a, c );
+    }
+
+    // 3 - Test orientation for the original JTS test case
+    // jts/java/src/com/vividsolutions/jts/algorithm/RobustDeterminant.java, r626
+    // http://sourceforge.net/p/jts-topo-suite/code/626/
+    template<>
+    template<>
+    void object::test<3>()
+    {
+        Coordinate p0(219.3649559090992, 140.84159161824724);
+        Coordinate p1(168.9018919682399, -5.713787599646864);
+        Coordinate p(186.80814046338352, 46.28973405831556);
+        // CGAlgorithms::orientationIndex gives both the same!!!
+        // First case of doubledouble robustness improvement
+        int orient = CGAlgorithmsDD::orientationIndex(p0, p1, p);
+        int orientInv = CGAlgorithmsDD::orientationIndex(p1, p0, p);
+        ensure( orient != orientInv );
+    }
+
+    // 4 - make sure CGAlgorithmsDD::checkSignOfDet2x2 isn't
+    // busted
+    template<>
+    template<>
+    void object::test<4>()
+    {
+        ensure( 0 == CGAlgorithmsDD::signOfDet2x2(1.0, 1.0, 2.0, 2.0));
+        ensure( 1 == CGAlgorithmsDD::signOfDet2x2(1.0, 1.0, 2.0, 3.0));
+        ensure( -1 == CGAlgorithmsDD::signOfDet2x2(1.0, 1.0, 3.0, 2.0));
     }
 
 } // namespace tut

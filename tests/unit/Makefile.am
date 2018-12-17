@@ -40,19 +40,21 @@ geos_unit_LDADD = \
 geos_unit_SOURCES = \
 	geos_unit.cpp \
 	algorithm/AngleTest.cpp \
-	algorithm/InteriorPointAreaTest.cpp \
+	algorithm/AreaTest.cpp \
+	algorithm/CGAlgorithms/computeOrientationTest.cpp \
 	algorithm/CGAlgorithms/isCCWTest.cpp \
 	algorithm/CGAlgorithms/isPointInRingTest.cpp \
-	algorithm/CGAlgorithms/computeOrientationTest.cpp \
 	algorithm/CGAlgorithms/signedAreaTest.cpp \
 	algorithm/ConvexHullTest.cpp \
-	algorithm/distance/DiscreteHausdorffDistanceTest.cpp \
 	algorithm/distance/DiscreteFrechetDistanceTest.cpp \
+	algorithm/distance/DiscreteHausdorffDistanceTest.cpp \
+	algorithm/InteriorPointAreaTest.cpp \
+	algorithm/LocatePointInRingTest.cpp \
 	algorithm/MinimumDiameterTest.cpp \
+	algorithm/OrientationIndexFailureTest.cpp \
 	algorithm/PointLocatorTest.cpp \
 	algorithm/RobustLineIntersectionTest.cpp \
 	algorithm/RobustLineIntersectorTest.cpp \
-	algorithm/SIRtreePointInRingTest.cpp \
 	geom/CoordinateArraySequenceFactoryTest.cpp \
 	geom/CoordinateArraySequenceTest.cpp \
 	geom/CoordinateListTest.cpp \
