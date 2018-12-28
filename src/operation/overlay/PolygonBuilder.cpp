@@ -118,12 +118,15 @@ PolygonBuilder::add(const vector<geomgraph::DirectedEdge*> *dirEdges,
 
     vector<FastPIPRing> indexedshellist;
     for (auto const& shell : shellList)
-        indexedshellist.push_back(FastPIPRing(shell, new geos::algorithm::locate::IndexedPointInAreaLocator(*shell->getLinearRing())));
-	placeFreeHoles(indexedshellist, freeHoleList);
+    {
+        FastPIPRing pipRing { shell,new geos::algorithm::locate::IndexedPointInAreaLocator(*shell->getLinearRing()) };
+        indexedshellist.push_back(pipRing);
+    }
+    placeFreeHoles(indexedshellist, freeHoleList);
 	//Assert: every hole on freeHoleList has a shell assigned to it
 
     for (auto const& shell : indexedshellist)
-        delete get<1>(shell);
+        delete shell.pipLocator;
 }
 
 /*public*/
@@ -343,7 +346,7 @@ PolygonBuilder::findEdgeRingContaining(EdgeRing *testEr,
 	for(auto const& tryShell: newShellList)
 	{
         ;
-		LinearRing *tryShellRing= get<0>(tryShell)->getLinearRing();
+		LinearRing *tryShellRing= tryShell.edgeRing->getLinearRing();
 		const Envelope *tryShellEnv=tryShellRing->getEnvelopeInternal();
 		// the hole envelope cannot equal the shell envelope
 		// (also guards against testing rings against themselves)
@@ -355,7 +358,7 @@ PolygonBuilder::findEdgeRingContaining(EdgeRing *testEr,
 		Coordinate testPt = operation::polygonize::EdgeRing::ptNotInList(testRing->getCoordinatesRO(), tsrcs);
 		bool isContained=false;
 
-    if (get<1>(tryShell)->locate(&testPt) != Location::EXTERIOR)
+    if (tryShell.pipLocator->locate(&testPt) != Location::EXTERIOR)
 			isContained=true;
 
 		// check if this new containing ring is smaller than
@@ -363,7 +366,7 @@ PolygonBuilder::findEdgeRingContaining(EdgeRing *testEr,
 		if (isContained) {
 			if (minShell==nullptr
 				|| minShellEnv->contains(tryShellEnv)) {
-					minShell= get<0>(tryShell);
+					minShell= tryShell.edgeRing;
 					minShellEnv=minShell->getLinearRing()->getEnvelopeInternal();
 			}
 		}
