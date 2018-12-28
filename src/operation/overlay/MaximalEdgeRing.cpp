@@ -45,8 +45,7 @@ namespace operation { // geos.operation
 namespace overlay { // geos.operation.overlay
 
 /*public*/
-// CGAlgorithms obsoleted
-MaximalEdgeRing::MaximalEdgeRing(geos::geomgraph::DirectedEdge *start,
+MaximalEdgeRing::MaximalEdgeRing(geomgraph::DirectedEdge *start,
 		const GeometryFactory *p_geometryFactory)
 	// throw(const TopologyException &)
 	:
@@ -68,15 +67,15 @@ MaximalEdgeRing::~MaximalEdgeRing()
 }
 
 /*public*/
-geos::geomgraph::DirectedEdge*
-MaximalEdgeRing::getNext(geos::geomgraph::DirectedEdge *de)
+geomgraph::DirectedEdge*
+MaximalEdgeRing::getNext(geomgraph::DirectedEdge *de)
 {
 	return de->getNext();
 }
 
 /*public*/
 void
-MaximalEdgeRing::setEdgeRing(geos::geomgraph::DirectedEdge *de,EdgeRing *er)
+MaximalEdgeRing::setEdgeRing(geomgraph::DirectedEdge *de,EdgeRing *er)
 {
 	de->setEdgeRing(er);
 }
@@ -85,13 +84,13 @@ MaximalEdgeRing::setEdgeRing(geos::geomgraph::DirectedEdge *de,EdgeRing *er)
 void
 MaximalEdgeRing::linkDirectedEdgesForMinimalEdgeRings()
 {
-	geos::geomgraph::DirectedEdge* de=startDe;
+    geomgraph::DirectedEdge* de=startDe;
 	do {
-		geos::geomgraph::Node* node=de->getNode();
+        geomgraph::Node* node=de->getNode();
 		EdgeEndStar* ees = node->getEdges();
 
-		assert(dynamic_cast<geos::geomgraph::DirectedEdgeStar*>(ees));
-		geos::geomgraph::DirectedEdgeStar* des = static_cast<geos::geomgraph::DirectedEdgeStar*>(ees);
+		assert(dynamic_cast<geomgraph::DirectedEdgeStar*>(ees));
+        geomgraph::DirectedEdgeStar* des = static_cast<geomgraph::DirectedEdgeStar*>(ees);
 
 		des->linkMinimalDirectedEdges(this);
 
@@ -113,7 +112,7 @@ MaximalEdgeRing::buildMinimalRings()
 void
 MaximalEdgeRing::buildMinimalRings(vector<MinimalEdgeRing*>& minEdgeRings)
 {
-	geos::geomgraph::DirectedEdge *de=startDe;
+    geomgraph::DirectedEdge *de=startDe;
 	do {
 		if(de->getMinEdgeRing()==nullptr) {
 			MinimalEdgeRing *minEr=new MinimalEdgeRing(de, geometryFactory);
@@ -127,7 +126,7 @@ MaximalEdgeRing::buildMinimalRings(vector<MinimalEdgeRing*>& minEdgeRings)
 void
 MaximalEdgeRing::buildMinimalRings(vector<EdgeRing*>& minEdgeRings)
 {
-	geos::geomgraph::DirectedEdge *de=startDe;
+    geomgraph::DirectedEdge *de=startDe;
 	do {
 		if(de->getMinEdgeRing()==nullptr) {
 			MinimalEdgeRing *minEr=new MinimalEdgeRing(de, geometryFactory);

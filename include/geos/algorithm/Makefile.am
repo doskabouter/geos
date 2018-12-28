@@ -14,19 +14,24 @@ geos_HEADERS = \
 	Angle.h \
 	Area.h \
 	BoundaryNodeRule.h \
+	CGAlgorithmsDD.h \
 	CentralEndpointIntersector.h \
 	Centroid.h \
-	CGAlgorithms.h \
 	ConvexHull.h \
 	ConvexHull.inl \
+	Distance.h \
 	HCoordinate.h \
 	InteriorPointArea.h \
 	InteriorPointLine.h \
 	InteriorPointPoint.h \
+	Length.h \
 	LineIntersector.h \
 	MinimumDiameter.h \
 	NotRepresentableException.h \
+	Orientation.h \
+	PointLocation.h \
 	PointLocator.h \
 	RayCrossingCounter.h \
 	RayCrossingCounterDD.h \
 	RobustDeterminant.h
+

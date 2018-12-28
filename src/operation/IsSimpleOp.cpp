@@ -165,7 +165,7 @@ IsSimpleOp::isSimpleLinearGeometry(const Geometry *p_geom)
 	if (p_geom->isEmpty()) return true;
 	GeometryGraph graph(0,p_geom);
 	LineIntersector li;
-	std::unique_ptr<geos::geomgraph::SegmentIntersector> si (graph.computeSelfNodes(&li,true));
+	std::unique_ptr<geomgraph::SegmentIntersector> si(graph.computeSelfNodes(&li,true));
 
 	// if no self-intersection, must be simple
 	if (!si->hasIntersection()) return true;
@@ -191,9 +191,9 @@ IsSimpleOp::isSimpleLinearGeometry(const Geometry *p_geom)
 bool
 IsSimpleOp::hasNonEndpointIntersection(GeometryGraph &graph)
 {
-	vector<geos::geomgraph::Edge*> *edges=graph.getEdges();
-	for (vector<geos::geomgraph::Edge*>::iterator i=edges->begin();i<edges->end();i++) {
-		geos::geomgraph::Edge *e=*i;
+	vector<geomgraph::Edge*> *edges=graph.getEdges();
+	for (vector<geomgraph::Edge*>::iterator i=edges->begin();i<edges->end();i++) {
+        geomgraph::Edge *e=*i;
 		auto maxSegmentIndex = e->getMaximumSegmentIndex();
 		EdgeIntersectionList &eiL=e->getEdgeIntersectionList();
 		for ( EdgeIntersectionList::iterator eiIt=eiL.begin(),
@@ -214,28 +214,28 @@ IsSimpleOp::hasNonEndpointIntersection(GeometryGraph &graph)
 
 /*private*/
 bool
-IsSimpleOp::computeSimple(const geom::Geometry *geom)
+IsSimpleOp::computeSimple(const geom::Geometry *g)
 {
 	nonSimpleLocation.reset();
 
-	if (dynamic_cast<const LineString*>(geom))
-		return isSimpleLinearGeometry(geom);
+	if (dynamic_cast<const LineString*>(g))
+		return isSimpleLinearGeometry(g);
 
-	if (dynamic_cast<const LinearRing*>(geom))
-		return isSimpleLinearGeometry(geom);
+	if (dynamic_cast<const LinearRing*>(g))
+		return isSimpleLinearGeometry(g);
 
-	if (dynamic_cast<const MultiLineString*>(geom))
-		return isSimpleLinearGeometry(geom);
+	if (dynamic_cast<const MultiLineString*>(g))
+		return isSimpleLinearGeometry(g);
 
-	if (dynamic_cast<const geos::geom::Polygon*>(geom))
-		return isSimplePolygonal(geom);
+	if (dynamic_cast<const geos::geom::Polygon*>(g))
+		return isSimplePolygonal(g);
 
-	const MultiPoint* mp = dynamic_cast<const MultiPoint*>(geom);
+	const MultiPoint* mp = dynamic_cast<const MultiPoint*>(g);
 	if (mp) return isSimpleMultiPoint(*mp);
 
 	// This must be after MultiPoint test, as MultiPoint can
 	// cast cleanly into GeometryCollection
-	const GeometryCollection* gc = dynamic_cast<const GeometryCollection*>(geom);
+	const GeometryCollection* gc = dynamic_cast<const GeometryCollection*>(g);
 	if (gc)
 		return isSimpleGeometryCollection(gc);
 
@@ -250,19 +250,19 @@ IsSimpleOp::isSimpleGeometryCollection(const geom::GeometryCollection *col)
 	GeometryCollection::const_iterator it;
 	for (it = col->begin(); it < col->end(); ++it)
 	{
-		const geom::Geometry *geom = *it;
-		if (!computeSimple(geom)) return false;
+		const geom::Geometry *g = *it;
+		if (!computeSimple(g)) return false;
 	}
 	return true;
 }
 
 /*private*/
 bool
-IsSimpleOp::isSimplePolygonal(const geom::Geometry *geom)
+IsSimpleOp::isSimplePolygonal(const geom::Geometry *g)
 {
 
 	LineString::ConstVect rings;
-	LinearComponentExtracter::getLines(*geom, rings);
+	LinearComponentExtracter::getLines(*g, rings);
 	for (const geom::LineString *ring : rings)
 	{
 			if(!isSimpleLinearGeometry(ring))
@@ -276,9 +276,9 @@ bool
 IsSimpleOp::hasClosedEndpointIntersection(GeometryGraph &graph)
 {
 	map<const Coordinate*,EndpointInfo*,CoordinateLessThen> endPoints;
-	vector<geos::geomgraph::Edge*> *edges=graph.getEdges();
-	for (vector<geos::geomgraph::Edge*>::iterator i=edges->begin();i<edges->end();i++) {
-		geos::geomgraph::Edge *e=*i;
+	vector<geomgraph::Edge*> *edges=graph.getEdges();
+	for (vector<geomgraph::Edge*>::iterator i=edges->begin();i<edges->end();i++) {
+        geomgraph::Edge *e=*i;
 		//int maxSegmentIndex=e->getMaximumSegmentIndex();
 		bool isClosed=e->isClosed();
 		const Coordinate *p0=&e->getCoordinate(0);

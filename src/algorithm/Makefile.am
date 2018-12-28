@@ -14,16 +14,19 @@ libalgorithm_la_SOURCES = \
 	Area.cpp \
 	BoundaryNodeRule.cpp \
 	Centroid.cpp \
-	CGAlgorithms.cpp \
 	CGAlgorithmsDD.cpp \
 	ConvexHull.cpp \
+	Distance.cpp \
 	HCoordinate.cpp \
 	InteriorPointArea.cpp \
 	InteriorPointLine.cpp \
 	InteriorPointPoint.cpp \
 	LineIntersector.cpp \
+	Length.cpp \
 	MinimumDiameter.cpp \
 	NotRepresentableException.cpp \
+	Orientation.cpp \
+	PointLocation.cpp \
 	PointLocator.cpp \
 	RayCrossingCounter.cpp \
 	RayCrossingCounterDD.cpp \

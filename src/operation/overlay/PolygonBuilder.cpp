@@ -28,7 +28,7 @@
 #include <geos/geom/GeometryFactory.h>
 #include <geos/geom/LinearRing.h>
 #include <geos/geom/Polygon.h>
-#include <geos/algorithm/CGAlgorithms.h>
+#include <geos/algorithm/PointLocation.h>
 #include <geos/util/TopologyException.h>
 #include <geos/util/GEOSException.h>
 #include <geos/util.h>
@@ -65,7 +65,7 @@ PolygonBuilder::~PolygonBuilder()
 
 /*public*/
 void
-PolygonBuilder::add(geos::geomgraph::PlanarGraph *graph)
+PolygonBuilder::add(geomgraph::PlanarGraph *graph)
 	//throw(TopologyException *)
 {
 	const vector<EdgeEnd*>* eeptr=graph->getEdgeEnds();
@@ -78,21 +78,21 @@ PolygonBuilder::add(geos::geomgraph::PlanarGraph *graph)
 	cerr << __FUNCTION__ << ": PlanarGraph has " << eeSize << " EdgeEnds" << endl;
 #endif
 
-	vector<geos::geomgraph::DirectedEdge*> dirEdges(eeSize);
+	vector<geomgraph::DirectedEdge*> dirEdges(eeSize);
 	for(size_t i=0; i<eeSize; ++i)
 	{
-		assert(dynamic_cast<geos::geomgraph::DirectedEdge*>(ee[i]));
-		geos::geomgraph::DirectedEdge* de = static_cast<geos::geomgraph::DirectedEdge*>(ee[i]);
+		assert(dynamic_cast<geomgraph::DirectedEdge*>(ee[i]));
+        geomgraph::DirectedEdge* de = static_cast<geomgraph::DirectedEdge*>(ee[i]);
 		dirEdges[i]=de;
 	}
 
-	geos::geomgraph::NodeMap::container &nodeMap=graph->getNodeMap()->nodeMap;
-	vector<geos::geomgraph::Node*> nodes;
+    geomgraph::NodeMap::container &nodeMap=graph->getNodeMap()->nodeMap;
+	vector<geomgraph::Node*> nodes;
 	nodes.reserve(nodeMap.size());
-	for (geos::geomgraph::NodeMap::iterator it=nodeMap.begin(), itEnd=nodeMap.end();
+	for (geomgraph::NodeMap::iterator it=nodeMap.begin(), itEnd=nodeMap.end();
 		it != itEnd; ++it )
 	{
-		geos::geomgraph::Node *node=it->second;
+        geomgraph::Node *node=it->second;
 		nodes.push_back(node);
 	}
 
@@ -101,11 +101,11 @@ PolygonBuilder::add(geos::geomgraph::PlanarGraph *graph)
 
 /*public*/
 void
-PolygonBuilder::add(const vector<geos::geomgraph::DirectedEdge*> *dirEdges,
-    const vector<geos::geomgraph::Node*> *nodes)
+PolygonBuilder::add(const vector<geomgraph::DirectedEdge*> *dirEdges,
+		const vector<geomgraph::Node*> *nodes)
     //throw(TopologyException *)
 {
-    geos::geomgraph::PlanarGraph::linkResultDirectedEdges(nodes->begin(), nodes->end());
+    geomgraph::PlanarGraph::linkResultDirectedEdges(nodes->begin(), nodes->end());
 
     vector<MaximalEdgeRing*> maxEdgeRings;
     buildMaximalEdgeRings(dirEdges, maxEdgeRings);
@@ -137,7 +137,7 @@ PolygonBuilder::getPolygons()
 
 /*private*/
 void
-PolygonBuilder::buildMaximalEdgeRings(const vector<geos::geomgraph::DirectedEdge*> *dirEdges,
+PolygonBuilder::buildMaximalEdgeRings(const vector<geomgraph::DirectedEdge*> *dirEdges,
   vector<MaximalEdgeRing*> &maxEdgeRings)
 	// throw(const TopologyException &)
 {
@@ -149,7 +149,7 @@ PolygonBuilder::buildMaximalEdgeRings(const vector<geos::geomgraph::DirectedEdge
 
 	for(size_t i=0, n=dirEdges->size(); i<n; i++)
 	{
-		geos::geomgraph::DirectedEdge *de=(*dirEdges)[i];
+        geomgraph::DirectedEdge *de=(*dirEdges)[i];
 #if GEOS_DEBUG
 	cerr << "  dirEdge " << i << endl
 	     << de->printEdge() << endl
@@ -355,7 +355,7 @@ PolygonBuilder::findEdgeRingContaining(EdgeRing *testEr,
 		Coordinate testPt = operation::polygonize::EdgeRing::ptNotInList(testRing->getCoordinatesRO(), tsrcs);
 		bool isContained=false;
 
-        if (get<1>(tryShell)->locate(&testPt) != Location::EXTERIOR)
+    if (get<1>(tryShell)->locate(&testPt) != Location::EXTERIOR)
 			isContained=true;
 
 		// check if this new containing ring is smaller than
@@ -384,7 +384,7 @@ PolygonBuilder::computePolygons(vector<EdgeRing*>& newShellList)
 	for(size_t i=0, n=newShellList.size(); i<n; i++)
 	{
 		EdgeRing *er=newShellList[i];
-		geos::geom::Polygon *poly=er->toPolygon(geometryFactory);
+        geos::geom::Polygon *poly=er->toPolygon(geometryFactory);
 		resultPolyList->push_back(poly);
 	}
 	return resultPolyList;
