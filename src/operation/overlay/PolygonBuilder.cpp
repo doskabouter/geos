@@ -28,7 +28,6 @@
 #include <geos/geom/GeometryFactory.h>
 #include <geos/geom/LinearRing.h>
 #include <geos/geom/Polygon.h>
-#include <geos/algorithm/PointLocation.h>
 #include <geos/util/TopologyException.h>
 #include <geos/util/GEOSException.h>
 #include <geos/util.h>
@@ -119,7 +118,7 @@ PolygonBuilder::add(const vector<geomgraph::DirectedEdge*> *dirEdges,
     vector<FastPIPRing> indexedshellist;
     for (auto const& shell : shellList)
     {
-        FastPIPRing pipRing { shell,new geos::algorithm::locate::IndexedPointInAreaLocator(*shell->getLinearRing()) };
+        FastPIPRing pipRing{ shell,new geos::algorithm::locate::IndexedPointInAreaLocator(*shell->getLinearRing()) };
         indexedshellist.push_back(pipRing);
     }
     placeFreeHoles(indexedshellist, freeHoleList);
@@ -345,8 +344,7 @@ PolygonBuilder::findEdgeRingContaining(EdgeRing *testEr,
 
 	for(auto const& tryShell: newShellList)
 	{
-        ;
-		LinearRing *tryShellRing= tryShell.edgeRing->getLinearRing();
+		LinearRing *tryShellRing = tryShell.edgeRing->getLinearRing();
 		const Envelope *tryShellEnv=tryShellRing->getEnvelopeInternal();
 		// the hole envelope cannot equal the shell envelope
 		// (also guards against testing rings against themselves)
